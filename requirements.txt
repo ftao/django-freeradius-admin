@@ -1,0 +1,9 @@
+Django==1.3
+MySQL-python
+#south
+#fabric
+flup
+#simplejson==2.1.3
+#django-email-extras
+#Mock
+#boto
