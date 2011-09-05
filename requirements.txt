@@ -1,5 +1,6 @@
 Django==1.3
 MySQL-python
+-e git://github.com/mozilla/django-piston.git#egg=django-piston
 #south
 #fabric
 flup
