@@ -1,0 +1,22 @@
+[
+  {
+    "pk": 1, 
+    "model": "freeradius.radgroupcheck", 
+    "fields": {
+      "groupname": "default", 
+      "op": ":=", 
+      "value": "3", 
+      "attribute": "Simultaneous-Use"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "freeradius.radgroupcheck", 
+    "fields": {
+      "groupname": "trial", 
+      "op": ":=", 
+      "value": "1", 
+      "attribute": "Simultaneous-Use"
+    }
+  }
+]

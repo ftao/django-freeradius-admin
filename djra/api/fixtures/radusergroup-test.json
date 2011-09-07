@@ -1,0 +1,38 @@
+[
+  {
+    "pk": 1, 
+    "model": "freeradius.radusergroup", 
+    "fields": {
+      "username": "demo", 
+      "groupname": "default", 
+      "priority": 1
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "freeradius.radusergroup", 
+    "fields": {
+      "username": "trial", 
+      "groupname": "default", 
+      "priority": 0
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "freeradius.radusergroup", 
+    "fields": {
+      "username": "test8", 
+      "groupname": "trial", 
+      "priority": 0
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "freeradius.radusergroup", 
+    "fields": {
+      "username": "gudu", 
+      "groupname": "trial", 
+      "priority": 0
+    }
+  }
+]

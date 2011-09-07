@@ -4,6 +4,7 @@ MySQL-python
 #south
 #fabric
 flup
+django-test-utils
 #simplejson==2.1.3
 #django-email-extras
 #Mock

@@ -1,0 +1,42 @@
+[
+  {
+    "pk": 1, 
+    "model": "freeradius.radcheck", 
+    "fields": {
+      "username": "demo", 
+      "attribute": "User-Password", 
+      "value": "31415926", 
+      "op": ":="
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "freeradius.radcheck", 
+    "fields": {
+      "username": "trial", 
+      "attribute": "User-Password", 
+      "value": "31415926", 
+      "op": ":="
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "freeradius.radcheck", 
+    "fields": {
+      "username": "test8", 
+      "attribute": "User-Password", 
+      "value": "WByJER", 
+      "op": ":="
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "freeradius.radcheck", 
+    "fields": {
+      "username": "gudu", 
+      "attribute": "User-Password", 
+      "value": "RhatoO", 
+      "op": ":="
+    }
+  }
+]
