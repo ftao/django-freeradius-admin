@@ -13,7 +13,7 @@
     "model": "freeradius.radusergroup", 
     "fields": {
       "username": "trial", 
-      "groupname": "default", 
+      "groupname": "default-123", 
       "priority": 0
     }
   }, 

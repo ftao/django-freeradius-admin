@@ -6,7 +6,7 @@ from piston.handler import BaseHandler
 from piston.utils import rc, throttle
 from piston.utils import validate, FormValidationError
 
-from freeradius.models import Radusergroup,Radcheck
+from freeradius.models import Radusergroup,Radcheck,Radgroupcheck
 from djra.api.forms import RadUserForm
 
 DEFAULT_GROUP_NAME = 'default'
@@ -119,3 +119,29 @@ class RadUserHandler(BaseHandler):
             return get_raduser(username)
         except Radcheck.DoesNotExist:
             return rc.NOT_FOUND
+
+
+class RadGroupHandler(BaseHandler):
+    allowed_methods = ('GET',)# 'POST', 'PUT')
+
+    def read(self, request, groupname=None):
+        if groupname is None:
+            groups_1 =  Radgroupcheck.objects.values_list('groupname', flat=True).distinct()
+            groups_2 =  Radusergroup.objects.values_list('groupname', flat=True).distinct()
+            groups = list(set(groups_1).union(set(groups_2)))
+            return groups
+            
+        else:
+            radgc_records =  Radgroupcheck.objects.filter(groupname=groupname)
+            user_count =  Radusergroup.objects.filter(groupname=groupname).distinct().count()
+
+            if len(radgc_records) == 0 and user_count == 0:
+                return rc.NOT_FOUND
+
+            attrs = [] 
+            for radgc in radgc_records:
+                attrs.append({'attribute' : radgc.attribute,
+                              'op' : radgc.op,
+                              'value' : radgc.value})
+            return {'groupname' : groupname, 'attrs' : attrs, 'user_count' : user_count}
+    
