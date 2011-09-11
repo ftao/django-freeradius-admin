@@ -4,15 +4,18 @@ import random
 
 from piston.handler import BaseHandler
 from piston.utils import rc, throttle
+from piston.utils import validate, FormValidationError
+
 from freeradius.models import Radusergroup,Radcheck
+from djra.api.forms import RadUserForm
 
 DEFAULT_GROUP_NAME = 'default'
 
-def is_raduser_valid(username):
-    return not Radcheck.objects.filter(username=username,
-                                       attribute='Auth-Type',
-                                       op=':=',
-                                       value='Reject').exists()
+def is_raduser_suspended(username):
+    return Radcheck.objects.filter(username=username,
+                                   attribute='Auth-Type',
+                                   op=':=',
+                                   value='Reject').exists()
 
 def get_raduser(username):
     record = Radcheck.objects.get(username=username, attribute='User-Password', op=':=')
@@ -20,12 +23,12 @@ def get_raduser(username):
     return {
         'username' : record.username,
         'password' : record.value,
-        'is_valid' : is_raduser_valid(record.username),
+        'is_suspended' : is_raduser_suspended(record.username),
         'groups' : groups,
     }
 
    
-def update_raduser(username, password=None, is_valid=None, groups=None):
+def update_raduser(username, password=None, is_suspended=None, groups=None):
     #update password 
     record = Radcheck.objects.get(username=username, attribute='User-Password', op=':=')
     if password is not None and record.value != password:
@@ -33,11 +36,11 @@ def update_raduser(username, password=None, is_valid=None, groups=None):
         record.save()
 
     #update valid state
-    if is_valid is not None:
-        if is_valid:
-            Radcheck.objects.filter(username=username, attribute='Auth-Type', op=':=', value='Reject').delete()
-        else:
+    if is_suspended is not None:
+        if is_suspended:
             Radcheck.objects.get_or_create(username=username, attribute='Auth-Type', op=':=', value='Reject')
+        else:
+            Radcheck.objects.filter(username=username, attribute='Auth-Type', op=':=', value='Reject').delete()
         
 
     #update groups 
@@ -65,12 +68,25 @@ class RadUserHandler(BaseHandler):
             return rc.NOT_FOUND
     
     def create(self, request, username=None):
-        username = request.POST.get('username', username)
-        password = request.POST.get('password', gen_random_password(6))
-        groups = request.POST.get('groups', DEFAULT_GROUP_NAME)
-        is_valid = request.POST.get('is_valid', '1')
-        is_valid = not (is_valid == '0')
-        groups = filter(lambda x: len(x) > 0, groups.split(','))
+        #do somethins simliar to validate decorator ,
+        #but we fill in some default values
+        raw_data = {
+            'username' : username,
+            'password' : gen_random_password(6),
+            'groups' : DEFAULT_GROUP_NAME,
+            'is_suspended' : '0'
+        }
+        raw_data.update(request.POST.items())
+        form = RadUserForm(raw_data)
+
+        if not form.is_valid():
+            raise FormValidationError(form)
+
+        data = form.cleaned_data
+        username = data['username']
+        password = data['password']
+        groups = data['groups'].split(',')
+        is_suspended = data['is_suspended']
 
         record, created = Radcheck.objects.get_or_create(username=username, attribute='User-Password',
                                                          op=':=', defaults={'value':password})
@@ -78,21 +94,28 @@ class RadUserHandler(BaseHandler):
         if not created:
             return rc.DUPLICATE_ENTRY
 
-        update_raduser(username, password, is_valid, groups)
+        update_raduser(username, password, is_suspended, groups)
         return get_raduser(username)
 
     def update(self, request, username=None):
-        username = request.PUT.get('username', username)
-        password = request.PUT.get('password', None)
-        groups = request.PUT.get('groups', None)
-        is_valid = request.PUT.get('is_valid', None)
-        if is_valid is not None:
-            is_valid = not (is_valid == '0')
-        if groups is not None:
-            groups = filter(lambda x: len(x) > 0, groups.split(','))
+        raw_data = {
+            'username' : username,
+        }
+        raw_data.update(request.PUT.items())
+
+        form = RadUserForm(raw_data)
+        if not form.is_valid():
+            raise FormValidationError(form)
+
+        data = form.cleaned_data
+
+        username = data['username']
+        password = data['password'] if 'password' in raw_data else None
+        groups = data['groups'].split(',') if 'groups' in raw_data else None
+        is_suspended = data['is_suspended'] if 'is_suspended' in raw_data else None
 
         try:
-            update_raduser(username, password, is_valid, groups)
+            update_raduser(username, password, is_suspended, groups)
             return get_raduser(username)
         except Radcheck.DoesNotExist:
             return rc.NOT_FOUND
