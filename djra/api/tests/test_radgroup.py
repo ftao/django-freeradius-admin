@@ -11,6 +11,7 @@ class RadGroupTest(TestCase):
     def test_getlist(self):
         resp = self.client.get('/api/0/radgroups/')
         expected = ['default', 'trial', 'default-123']
+        self.assertEqual(resp.status_code, 200)
         self.assertEqual(json.loads(resp.content), expected)
 
 
@@ -27,5 +28,6 @@ class RadGroupTest(TestCase):
                 }
             ]
         }
+        self.assertEqual(resp.status_code, 200)
         self.assertEqual(json.loads(resp.content), expected)
     
