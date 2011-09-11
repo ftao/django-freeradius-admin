@@ -6,7 +6,7 @@ from piston.handler import BaseHandler
 from piston.utils import rc, throttle
 from piston.utils import validate, FormValidationError
 
-from freeradius.models import Radusergroup,Radcheck,Radgroupcheck
+from freeradius.models import Radusergroup,Radcheck,Radgroupcheck,Radacct
 from djra.api.forms import RadUserForm
 
 DEFAULT_GROUP_NAME = 'default'
@@ -145,3 +145,25 @@ class RadGroupHandler(BaseHandler):
                               'value' : radgc.value})
             return {'groupname' : groupname, 'attrs' : attrs, 'user_count' : user_count}
     
+class RadAcctHandler(BaseHandler):
+    allowed_methods = ('GET',)
+    model = Radacct
+    exclude = ('id', 'groupname', 'realm', 'connectinfo_start', 'connectinfo_stop',
+               'calledstationid', 'acctstartdelay', 'acctstopdelay', 'xascendsessionsvrkey')
+
+    def read(self, request, username=None):
+        records = Radacct.objects.filter(username=username)
+        if request.GET.get('type', None) == 'connected':
+            records = records.filter(acctstoptime=None)
+        limit = request.GET.get('limit', '')
+        try:
+            limit = int(limit)
+            if limit > 100:
+                limit = 100
+            if limit <= 0:
+                raise ValueError("limit must be postive")
+        except ValueError:
+            limit = 20
+        records = records.order_by('-acctstarttime')[:limit]
+
+        return records
