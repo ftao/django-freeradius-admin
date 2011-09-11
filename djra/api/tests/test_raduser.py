@@ -16,7 +16,7 @@ class RadUserTest(TestCase):
         self.client = Client()
 
     def test_get(self):
-        resp = self.client.get('/api/radusers/demo/')
+        resp = self.client.get('/api/0/radusers/demo/')
         expected = {
             "username": "demo", 
             "password": "31415926", 
@@ -32,7 +32,7 @@ class RadUserTest(TestCase):
             "username": "demo", 
             "password": "314159267", 
         }
-        resp = self.client.post('/api/radusers/', data=data)
+        resp = self.client.post('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 409)
 
     def test_create_invalid_usernme(self):
@@ -40,7 +40,7 @@ class RadUserTest(TestCase):
             "username": "demo&^", 
             "password": "314159267", 
         }
-        resp = self.client.post('/api/radusers/', data=data)
+        resp = self.client.post('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 400)
 
     def test_create_invalid_groupnames(self):
@@ -49,14 +49,14 @@ class RadUserTest(TestCase):
             "password": "314159267", 
             "groups" : "%jd,abc",
         }
-        resp = self.client.post('/api/radusers/', data=data)
+        resp = self.client.post('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 400)
 
     def test_create_empty_pass(self):
         data = {
             "username": "demo2", 
         }
-        resp = self.client.post('/api/radusers/', data=data)
+        resp = self.client.post('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 200)
         ret= json.loads(resp.content)
         self.assertEqual(ret['username'], 'demo2')
@@ -70,7 +70,7 @@ class RadUserTest(TestCase):
             "password" : "1234",
             "groups" : "trial,other,,,,,",
         }
-        resp = self.client.post('/api/radusers/', data=data)
+        resp = self.client.post('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 200)
         ret= json.loads(resp.content)
         self.assertEqual(ret['username'], 'demo2')
@@ -83,7 +83,7 @@ class RadUserTest(TestCase):
             "username": "demo2", 
             "is_suspended" : "1"
         }
-        resp = self.client.post('/api/radusers/', data=data)
+        resp = self.client.post('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 200)
         ret= json.loads(resp.content)
         self.assertEqual(ret['username'], 'demo2')
@@ -95,16 +95,16 @@ class RadUserTest(TestCase):
             "username": "demo2", 
             "is_suspended" : "1"
         }
-        resp = self.client.put('/api/radusers/', data=data)
+        resp = self.client.put('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 404)
 
 
     def test_update_nothing(self):
 
-        resp = self.client.get('/api/radusers/demo/')
+        resp = self.client.get('/api/0/radusers/demo/')
         old_ret = json.loads(resp.content)
 
-        resp = self.client.put('/api/radusers/demo/', data={})
+        resp = self.client.put('/api/0/radusers/demo/', data={})
         ret= json.loads(resp.content)
 
         self.assertEqual(old_ret, ret)
@@ -114,13 +114,13 @@ class RadUserTest(TestCase):
         data = {
             "is_suspended" : "1"
         }
-        resp = self.client.put('/api/radusers/demo/', data=data)
+        resp = self.client.put('/api/0/radusers/demo/', data=data)
         self.assertEqual(resp.status_code, 200)
         ret= json.loads(resp.content)
         self.assertEqual(ret['username'], 'demo')
         self.assertTrue(ret['is_suspended'])
 
-        resp = self.client.put('/api/radusers/demo/', data={'is_suspended' : '0'})
+        resp = self.client.put('/api/0/radusers/demo/', data={'is_suspended' : '0'})
         ret= json.loads(resp.content)
         self.assertEqual(ret['username'], 'demo')
         self.assertTrue(not ret['is_suspended'])
@@ -130,7 +130,7 @@ class RadUserTest(TestCase):
             "username" : "demo",
             "password" : "123456",
         }
-        resp = self.client.put('/api/radusers/', data=data)
+        resp = self.client.put('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 200)
         ret= json.loads(resp.content)
         self.assertEqual(ret['username'], 'demo')
@@ -143,7 +143,7 @@ class RadUserTest(TestCase):
             "username" : "demo",
             "groups" : "trial,other",
         }
-        resp = self.client.put('/api/radusers/', data=data)
+        resp = self.client.put('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 200)
         ret= json.loads(resp.content)
         self.assertEqual(ret['username'], 'demo')
@@ -157,7 +157,7 @@ class RadUserTest(TestCase):
             "password" : "123456",
             "groups" : "trial,other",
         }
-        resp = self.client.put('/api/radusers/', data=data)
+        resp = self.client.put('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 200)
         ret= json.loads(resp.content)
         self.assertEqual(ret['username'], 'demo')
@@ -170,7 +170,7 @@ class RadUserTest(TestCase):
             "username": "demo", 
             "groups" : "%jd,abc",
         }
-        resp = self.client.post('/api/radusers/', data=data)
+        resp = self.client.post('/api/0/radusers/', data=data)
         self.assertEqual(resp.status_code, 400)
 
 

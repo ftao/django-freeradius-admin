@@ -9,13 +9,13 @@ class RadGroupTest(TestCase):
         self.client = Client()
 
     def test_getlist(self):
-        resp = self.client.get('/api/radgroups/')
+        resp = self.client.get('/api/0/radgroups/')
         expected = ['default', 'trial', 'default-123']
         self.assertEqual(json.loads(resp.content), expected)
 
 
     def test_get(self):
-        resp = self.client.get('/api/radgroups/trial/')
+        resp = self.client.get('/api/0/radgroups/trial/')
         expected = {
             "groupname": "trial", 
             "user_count": 2, 
