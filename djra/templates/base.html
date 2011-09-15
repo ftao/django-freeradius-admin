@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>{% block title %}Home{% endblock %}</title> 
+{% comment %}{% load static_helper %}{% endcomment %}
+<link rel="shortcut icon" href="{{ STATIC_URL  }}img/favicon.ico" type="image/x-icon" /> 
+{% comment %}
+<link rel="stylesheet/less" href="{{ STATIC_URL  }}less/bootstrap.less" media="screen, projection"/>
+<link rel="stylesheet/less" href="{{ STATIC_URL  }}less/site.less" media="screen, projection"/> 
+<script type="text/javascript" src="{{ STATIC_URL  }}js/less-1.1.3.min.js"></script>
+{% endcomment %}
+<link rel="stylesheet" href="{{ STATIC_URL  }}css/bootstrap.css" media="screen, projection"/>
+<link rel="stylesheet" href="{{ STATIC_URL  }}css/site.css" media="screen, projection"/> 
+<script type="text/javascript" src="{{ STATIC_URL  }}js/jquery.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL  }}js/site.js"></script>
+{% block extra_head %}
+{% endblock %}
+</head>
+
+<body>
+
+    <!-- Topbar
+    ================================================== --> 
+    <div class="topbar"> 
+      <div class="topbar-inner"> 
+        <div class="container"> 
+          <h3><a href="/">FreeradiusAdmin</a></h3> 
+          <ul class="nav"> 
+            <li id="top-nav-home"><a href="{% url djra.radmin.views.home %}">Dashboard</a></li> 
+            <li id="top-nav-users"><a href="{% url djra.radmin.views.users %}">Users</a></li>
+            <li id="top-nav-groups"><a href="{% url djra.radmin.views.groups %}">Groups</a></li>
+          </ul> 
+          {% block header_auth %}
+          <ul class="nav secondary-nav">
+          {% if user.is_authenticated %}
+            <li><span>{{ user.username }}</span></li>
+            <li><a href="{% url django.contrib.auth.views.logout %}">Logout</a></li>
+          {% else %}
+            <li><a href="{% url django.contrib.auth.views.login %}">Login</a></li>
+          {% endif %}
+          </ul>
+          {% endblock %}
+        </div> 
+      </div> 
+    </div> 
+
+{% block masthead %} 
+{% endblock %}
+
+{% block content %}
+<div id="content" class="container">
+    {% block message_area %}
+    {% if messages %}
+    <div class="section">
+      {% for message in messages %}
+      <div class="alert-message {% if message.tags %} {{ message.tags }}{% endif %}"><p>{{ message }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endblock%}
+
+    {% block main_content %} {% endblock %}
+</div>
+{% endblock %}
+
+
+{% block footer %}
+	<div id="footer">
+    <div class="inner">
+    	<div class="container">
+        <p class="copyright">
+          Copyright  &copy;  2011 {{ TEAM_NAME }} <br />
+          All the respective rights reserved
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+</body>
+</html>

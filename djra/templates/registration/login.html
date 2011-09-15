@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<div class="section">
+  <div class="page-header">
+    <h1>Login</h1>
+  </div>
+  <div class="row">
+    <form method="post" class="big form-b">
+      {% csrf_token %}
+      {% include "include/form_snippet.html" %}
+      <div class="actions">
+        <input type="submit" class="btn primary" value="Login">
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

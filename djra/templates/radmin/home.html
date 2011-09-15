@@ -1,0 +1,41 @@
+{% extends "radmin/base.html" %}
+{% block title %}Djra - A Freeradius Admin Interface{% endblock %}
+{% block extra_head %}
+<script type="text/javascript">
+$(function(){
+  set_top_nav('home');
+});
+</script>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+  </div>
+  <div class="row">
+
+    <div class="span6 columns">
+      <h2>Users</h2>
+      <p>
+      </p>
+    </div>
+
+    <div class="span4 columns">
+      <h2>Groups</h2>
+      <p>
+      </p>
+    </div>
+
+    <div class="span4 columns">
+      <h2>Traffic</h2>
+      <p>
+      </p>
+    </div>
+
+  </div>
+      
+</div>
+{% endblock %}
+
+

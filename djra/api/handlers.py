@@ -2,6 +2,8 @@ import re
 import string
 import random
 
+from django.db.models import Q
+
 from piston.handler import BaseHandler
 from piston.utils import rc, throttle
 from piston.utils import validate, FormValidationError
@@ -61,12 +63,36 @@ def gen_random_password(len):
 class RadUserHandler(BaseHandler):
     allowed_methods = ('GET', 'POST', 'PUT')
 
-    def read(self, request, username):
-        try:
-            return get_raduser(username)
-        except Radcheck.DoesNotExist:
-            return rc.NOT_FOUND
-    
+    def read(self, request, username=None):
+        if username is None:
+            query = Radcheck.objects.filter(attribute='User-Password', op=':=')
+            q = request.GET.get('q', '')
+            if q:
+                query = query.filter(username__icontains=q)
+            usernames = query.values_list('username', flat=True).distinct()
+
+            #filter with is_suspended
+            is_suspended = request.GET.get('is_suspended', None)
+            if is_suspended is not None:
+                suspended_users = (Radcheck.objects.filter(username__in=usernames,
+                                                          attribute='Auth-Type',
+                                                          op=':=',
+                                                          value='Reject')
+                                                   .values_list('username', flat=True)
+                                                   .distinct()
+                                  )
+                if is_suspended in ('0', ''):
+                    usernames = [u for u in usernames if u not in suspended_users]
+                else:
+                    usernames = suspended_users
+                    
+            return usernames
+        else:
+            try:
+                return get_raduser(username)
+            except Radcheck.DoesNotExist:
+                return rc.NOT_FOUND
+        
     def create(self, request, username=None):
         #do somethins simliar to validate decorator ,
         #but we fill in some default values
