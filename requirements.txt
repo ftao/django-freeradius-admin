@@ -5,6 +5,7 @@ MySQL-python
 #fabric
 flup
 django-test-utils
+django-paging
 #simplejson==2.1.3
 #django-email-extras
 #Mock

@@ -10,6 +10,7 @@ from piston.utils import validate, FormValidationError
 
 from freeradius.models import Radusergroup,Radcheck,Radgroupcheck,Radacct
 from djra.api.forms import RadUserForm
+from djra.api.models import RadUser
 
 DEFAULT_GROUP_NAME = 'default'
 

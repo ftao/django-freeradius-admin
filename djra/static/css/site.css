@@ -13,6 +13,7 @@ body {
 #content {
     min-height:300px;
     padding-top: 60px;
+    margin-bottom:30px;
 }
 
 div.section > .row {

@@ -3,6 +3,27 @@ from django.db import models
 from django.db.models import Q
 from freeradius.models import Radusergroup,Radcheck,Radgroupcheck,Radacct
 
+class RadUser(Radcheck):
+
+    class Meta:
+        proxy = True
+
+    @property
+    def password(self):
+        assert self.attribute == 'User-Password'
+        assert self.op == ':='
+        return self.value
+
+    @property
+    def is_suspended(self):
+        assert self.attribute == 'User-Password'
+        assert self.op == ':='
+        return Radcheck.objects.filter(
+            username=self.username,
+            attribute='Auth-Type',
+            op=':=',
+            value='Reject').exists()
+    
 def get_raduser_count():
     total_count = Radcheck.objects.filter(attribute='User-Password', op=':=')\
                                   .values('username')\
