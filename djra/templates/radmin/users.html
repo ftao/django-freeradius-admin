@@ -16,6 +16,10 @@ $(function(){
     <h1>Users</h1>
   </div>
   <div>
+    <form>
+      {% include "include/filter_form_snippet.html" with form=filter_form %}
+      <input type="submit" value="Search" class="btn"/>
+    </form>
     {% load paging_extras %}
 
     {% paginate query_set from request as results False %}
