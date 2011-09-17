@@ -20,17 +20,6 @@ def is_raduser_suspended(username):
                                    op=':=',
                                    value='Reject').exists()
 
-def get_raduser(username):
-    record = Radcheck.objects.get(username=username, attribute='User-Password', op=':=')
-    groups = Radusergroup.objects.filter(username=username).order_by('priority').values_list('groupname', flat=True)
-    return {
-        'username' : record.username,
-        'password' : record.value,
-        'is_suspended' : is_raduser_suspended(record.username),
-        'groups' : groups,
-    }
-
-   
 def update_raduser(username, password=None, is_suspended=None, groups=None):
     #update password 
     record = Radcheck.objects.get(username=username, attribute='User-Password', op=':=')
@@ -62,35 +51,28 @@ def gen_random_password(len):
     return ''.join(random.choice(string.digits) for i in xrange(len))
 
 class RadUserHandler(BaseHandler):
+    model = RadUser
+    fields = ('username', 'password', 'is_suspended', 'groups')
     allowed_methods = ('GET', 'POST', 'PUT')
 
     def read(self, request, username=None):
         if username is None:
-            query = Radcheck.objects.filter(attribute='User-Password', op=':=')
+            query_set = RadUser.objects.all()
+            is_suspended = request.GET.get('is_suspended', None)
+            if is_suspended == '0':
+                query_set = RadUser.objects.query_suspended_user()
+            elif is_suspended == '1':
+                query_set = RadUser.objects.query_active_user()
+                    
             q = request.GET.get('q', '')
             if q:
-                query = query.filter(username__icontains=q)
-            usernames = query.values_list('username', flat=True).distinct()
-
-            #filter with is_suspended
-            is_suspended = request.GET.get('is_suspended', None)
-            if is_suspended is not None:
-                suspended_users = (Radcheck.objects.filter(username__in=usernames,
-                                                          attribute='Auth-Type',
-                                                          op=':=',
-                                                          value='Reject')
-                                                   .values_list('username', flat=True)
-                                                   .distinct()
-                                  )
-                if is_suspended in ('0', ''):
-                    usernames = [u for u in usernames if u not in suspended_users]
-                else:
-                    usernames = suspended_users
-                    
+                query_set = query_set.filter(username__icontains=q)
+        
+            usernames = query_set.values_list('username', flat=True).distinct()
             return usernames
         else:
             try:
-                return get_raduser(username)
+                return RadUser.objects.get(username=username)
             except Radcheck.DoesNotExist:
                 return rc.NOT_FOUND
         
@@ -122,7 +104,7 @@ class RadUserHandler(BaseHandler):
             return rc.DUPLICATE_ENTRY
 
         update_raduser(username, password, is_suspended, groups)
-        return get_raduser(username)
+        return RadUser.objects.get(username=username)
 
     def update(self, request, username=None):
         raw_data = {
@@ -143,7 +125,7 @@ class RadUserHandler(BaseHandler):
 
         try:
             update_raduser(username, password, is_suspended, groups)
-            return get_raduser(username)
+            return RadUser.objects.get(username=username)
         except Radcheck.DoesNotExist:
             return rc.NOT_FOUND
 
