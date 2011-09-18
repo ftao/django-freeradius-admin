@@ -14,39 +14,6 @@ from djra.api.models import RadUser
 
 DEFAULT_GROUP_NAME = 'default'
 
-def is_raduser_suspended(username):
-    return Radcheck.objects.filter(username=username,
-                                   attribute='Auth-Type',
-                                   op=':=',
-                                   value='Reject').exists()
-
-def update_raduser(username, password=None, is_suspended=None, groups=None):
-    #update password 
-    record = Radcheck.objects.get(username=username, attribute='User-Password', op=':=')
-    if password is not None and record.value != password:
-        record.value = password
-        record.save()
-
-    #update valid state
-    if is_suspended is not None:
-        if is_suspended:
-            Radcheck.objects.get_or_create(username=username, attribute='Auth-Type', op=':=', value='Reject')
-        else:
-            Radcheck.objects.filter(username=username, attribute='Auth-Type', op=':=', value='Reject').delete()
-        
-
-    #update groups 
-    if groups is not None and type(groups) in (list, tuple):
-        old_groups = Radusergroup.objects.filter(username=username).order_by('priority').values_list('groupname', flat=True)
-        if set(old_groups) != set(groups):
-            to_delete = set(old_groups) - set(groups)
-            Radusergroup.objects.filter(username=username, groupname__in=to_delete).delete()
-
-            to_add = set(groups) - set(old_groups)
-            for group in to_add:
-                Radusergroup.objects.create(username=username, groupname=group)
-
-
 def gen_random_password(len):
     return ''.join(random.choice(string.digits) for i in xrange(len))
 
@@ -73,7 +40,7 @@ class RadUserHandler(BaseHandler):
         else:
             try:
                 return RadUser.objects.get(username=username)
-            except Radcheck.DoesNotExist:
+            except RadUser.DoesNotExist:
                 return rc.NOT_FOUND
         
     def create(self, request, username=None):
@@ -97,13 +64,12 @@ class RadUserHandler(BaseHandler):
         groups = data['groups'].split(',')
         is_suspended = data['is_suspended']
 
-        record, created = Radcheck.objects.get_or_create(username=username, attribute='User-Password',
-                                                         op=':=', defaults={'value':password})
+        record, created = RadUser.objects.get_or_create(username=username, defaults={'value':password})
  
         if not created:
             return rc.DUPLICATE_ENTRY
 
-        update_raduser(username, password, is_suspended, groups)
+        record.update(password, is_suspended, groups)
         return RadUser.objects.get(username=username)
 
     def update(self, request, username=None):
@@ -124,8 +90,9 @@ class RadUserHandler(BaseHandler):
         is_suspended = data['is_suspended'] if 'is_suspended' in raw_data else None
 
         try:
-            update_raduser(username, password, is_suspended, groups)
-            return RadUser.objects.get(username=username)
+            raduser = RadUser.objects.get(username=username)
+            raduser.update(password, is_suspended, groups)
+            return raduser
         except Radcheck.DoesNotExist:
             return rc.NOT_FOUND
 

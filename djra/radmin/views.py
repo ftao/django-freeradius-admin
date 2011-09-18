@@ -3,9 +3,12 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseForbidden,HttpResponse,HttpResponseBadRequest
 from django.conf import settings
+from django.contrib import messages
+
 from freeradius.models import Radusergroup,Radcheck,Radgroupcheck,Radacct
 from djra.api.models import RadUser, get_radgroup_count
-from djra.radmin.forms import RadUserFilterForm
+from djra.radmin.forms import RadUserFilterForm,RadUserForm,NewRadUserForm
+
 
 def home(request):
     user_count = RadUser.objects.count_info()
@@ -35,6 +38,55 @@ def users(request):
     return render_to_response(
         'radmin/users.html',
         {'query_set' : query_set, 'filter_form' : filter_form, 'request' : request},
+        context_instance = RequestContext(request)
+    )
+
+def user_detail(request, username):
+    try:
+        raduser = RadUser.objects.get(username=username)
+    except RadUser.DoesNotExist:
+        return HttpResponseNotFound('not found')
+    if request.method == 'POST':
+        form = RadUserForm(request.POST)
+        if form.is_valid():
+            assert raduser.username == form.cleaned_data['username']
+            raduser.update(password=form.cleaned_data['password'],
+                           is_suspended=form.cleaned_data['is_suspended'],
+                           groups=form.cleaned_data['groups'].split(','))
+            messages.success(request, 'User %s saved.' %raduser.username)
+    else:
+        data = {
+            u'username' : raduser.username,
+            u'password' : raduser.password,
+            u'is_suspended' : raduser.is_suspended, 
+            u'groups' : u','.join(raduser.groups),
+        }
+        form = RadUserForm(data)
+        
+    return render_to_response(
+        'radmin/user_detail.html',
+        {'raduser' : raduser, 'form' : form, 'request' : request},
+        context_instance = RequestContext(request)
+    )
+
+def create_user(request):
+    if request.method == 'POST':
+        form = NewRadUserForm(request.POST)
+        if form.is_valid():
+            username=form.cleaned_data['username']
+            raduser, created = RadUser.objects.get_or_create(username=username,
+                                                             defaults={'value' : form.cleaned_data['password']})
+            raduser.update(password=form.cleaned_data['password'],
+                           is_suspended=form.cleaned_data['is_suspended'],
+                           groups=form.cleaned_data['groups'].split(','))
+            messages.success(request, 'User %s created.' %username)
+            return HttpResponseRedirect(reverse('djra.radmin.views.user_detail', kwargs={'username' : username}))
+    else:
+        form = NewRadUserForm()
+        
+    return render_to_response(
+        'radmin/create_user.html',
+        {'form' : form, 'request' : request},
         context_instance = RequestContext(request)
     )
 

@@ -3,16 +3,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>{% block title %}Home{% endblock %}</title> 
-{% comment %}{% load static_helper %}{% endcomment %}
 <link rel="shortcut icon" href="{{ STATIC_URL  }}img/favicon.ico" type="image/x-icon" /> 
-{% comment %}
-<link rel="stylesheet/less" href="{{ STATIC_URL  }}less/bootstrap.less" media="screen, projection"/>
-<link rel="stylesheet/less" href="{{ STATIC_URL  }}less/site.less" media="screen, projection"/> 
-<script type="text/javascript" src="{{ STATIC_URL  }}js/less-1.1.3.min.js"></script>
-{% endcomment %}
 <link rel="stylesheet" href="{{ STATIC_URL  }}css/bootstrap.css" media="screen, projection"/>
 <link rel="stylesheet" href="{{ STATIC_URL  }}css/site.css" media="screen, projection"/> 
-<script type="text/javascript" src="{{ STATIC_URL  }}js/jquery.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL  }}js/jquery.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL  }}js/site.js"></script>
 {% block extra_head %}
 {% endblock %}

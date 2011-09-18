@@ -16,7 +16,13 @@
 
         {{ field.label_tag }}
         <div class="input">{{ field }}
-        {{ field.errors }}
+        {% if field.errors %}
+          {{ field.errors }}
+        {% else %}
+          {% if field.help_text %}
+          <span class="help-block">{{ field.help_text }}</span>
+          {% endif %}
+        {% endif %}
         </div>
     </div>
 {% endfor %}

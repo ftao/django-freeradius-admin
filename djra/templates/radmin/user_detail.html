@@ -1,0 +1,30 @@
+{% extends "radmin/base.html" %}
+{% load i18n %}
+
+{% block title %}User {{ raduser.username }} - Djra{% endblock %}
+{% block extra_head %}
+<script type="text/javascript">
+$(function(){
+  set_top_nav('users');
+});
+</script>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+  <div class="page-header">
+    <h1>{% block page_header %}User - {{ raduser.username }} {% endblock %}</h1>
+  </div>
+  <div>
+    <form method="POST">
+      {% csrf_token %}
+      {% include "include/form_snippet.html" with form=form %}
+      <div class="actions">
+        <input type="submit" value="Save" class="btn primary"/>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+

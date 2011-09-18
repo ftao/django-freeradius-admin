@@ -1,7 +1,7 @@
 {% extends "radmin/base.html" %}
 {% load i18n %}
 
-{% block title %}Djra - A Freeradius Admin Interface{% endblock %}
+{% block title %}Users - Djra{% endblock %}
 {% block extra_head %}
 <script type="text/javascript">
 $(function(){
@@ -16,10 +16,17 @@ $(function(){
     <h1>Users</h1>
   </div>
   <div>
-    <form>
-      {% include "include/filter_form_snippet.html" with form=filter_form %}
-      <input type="submit" value="Search" class="btn"/>
-    </form>
+    <div class="row">
+      <div class="span14">
+      <form>
+        {% include "include/filter_form_snippet.html" with form=filter_form %}
+        <input type="submit" value="Search" class="btn"/>
+      </form>
+      </div>
+      <div class="span2">
+        <a href="{% url djra.radmin.views.create_user %}" class="btn">Add User</a>
+      </div>
+    </div>
     {% load paging_extras %}
 
     {% paginate query_set from request as results False %}
@@ -35,10 +42,10 @@ $(function(){
     {% for result in results.objects %}
       <tbody>
         <tr>
-          <td>{{ result.username }}</td>
-          <td>{{ result.password }}</td>
+          <td class="cell-username"><a href="{% url djra.radmin.views.user_detail username=result.username %}">{{ result.username }}</a></td>
+          <td class="cell-password"><span>{{ result.password }}</span></td>
           <td>{{ result.groups|join:',' }}</td>
-          <td>{% if result.is_suspended %} <span class="red">Suspended</span> {% else %} <span class="green">Active</span> {% endif %}</td>
+          <td class="cell-is-active"><span {% if result.is_suspended %} class="red">Suspended {% else %}  class="green">Active{% endif %}</span></td>
         </tr>
       </tbody>
     {% endfor %}
