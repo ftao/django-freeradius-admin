@@ -28,7 +28,8 @@ $(function(){
         <tr>
           <th>Username</th>
           <th>Password</th>
-          <th>Is Suspended</th>
+          <th>Groups</th>
+          <th>Is Active</th>
         </tr>
       </thead>
     {% for result in results.objects %}
@@ -36,7 +37,8 @@ $(function(){
         <tr>
           <td>{{ result.username }}</td>
           <td>{{ result.password }}</td>
-          <td>{{ result.is_suspended }}</td>
+          <td>{{ result.groups|join:',' }}</td>
+          <td>{% if result.is_suspended %} <span class="red">Suspended</span> {% else %} <span class="green">Active</span> {% endif %}</td>
         </tr>
       </tbody>
     {% endfor %}
