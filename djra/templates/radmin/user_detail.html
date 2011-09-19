@@ -16,14 +16,21 @@ $(function(){
     <h1>{% block page_header %}User - {{ raduser.username }} {% endblock %}</h1>
   </div>
   <div>
-    <form method="POST">
-      {% csrf_token %}
-      {% include "include/form_snippet.html" with form=form %}
-      <div class="actions">
-        <input type="submit" value="Save" class="btn primary"/>
-      </div>
-    </form>
-  </div>
+
+  <ul class="tabs">
+    <li class="active"><a href="{% url djra.radmin.views.user_detail username=raduser.username %}">Basic</a></li>
+    <li><a href="{% url djra.radmin.views.user_sessions username=raduser.username %}">Session History</a></li>
+  </ul>
+  
+  <form method="POST">
+    {% csrf_token %}
+    {% include "include/form_snippet.html" with form=form %}
+    <div class="actions">
+      <input type="submit" value="Save" class="btn primary"/>
+    </div>
+  </form>
+  
+ </div>
 </div>
 {% endblock %}
 

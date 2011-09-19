@@ -62,12 +62,24 @@ def user_detail(request, username):
             u'groups' : u','.join(raduser.groups),
         }
         form = RadUserForm(data)
-        
     return render_to_response(
         'radmin/user_detail.html',
         {'raduser' : raduser, 'form' : form, 'request' : request},
         context_instance = RequestContext(request)
     )
+
+def user_sessions(request, username):
+    try:
+        raduser = RadUser.objects.get(username=username)
+    except RadUser.DoesNotExist:
+        return HttpResponseNotFound('not found')
+    sessions =  Radacct.objects.filter(username=username).order_by('-acctstarttime')
+    return render_to_response(
+        'radmin/user_sessions.html',
+        {'raduser' : raduser, 'sessions' : sessions, 'request' : request},
+        context_instance = RequestContext(request)
+    )
+
 
 def create_user(request):
     if request.method == 'POST':
@@ -91,9 +103,20 @@ def create_user(request):
     )
 
 def groups(request):
+    query_set = RadUser.objects.all()
+    filter_form = RadUserFilterForm(request.GET)
+    if filter_form.is_valid():
+        is_suspended = filter_form.cleaned_data.get('is_suspended', '')
+        if is_suspended == '0':
+            query_set = RadUser.objects.query_suspended_user()
+        elif is_suspended == '1':
+            query_set = RadUser.objects.query_active_user()
+            
+        q = filter_form.cleaned_data.get('username', '')
+        if q:
+            query_set = query_set.filter(username__icontains=q)
     return render_to_response(
         'radmin/groups.html',
-        {},
+        {'query_set' : query_set, 'filter_form' : filter_form, 'request' : request},
         context_instance = RequestContext(request)
     )
-

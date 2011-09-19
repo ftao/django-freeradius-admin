@@ -1,0 +1,58 @@
+{% extends "radmin/base.html" %}
+{% load i18n %}
+
+{% block title %}User {{ raduser.username }} - Djra{% endblock %}
+{% block extra_head %}
+<script type="text/javascript">
+$(function(){
+  set_top_nav('users');
+});
+</script>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+  <div class="page-header">
+    <h1>{% block page_header %}User {{ raduser.username }} Sessions {% endblock %}</h1>
+  </div>
+  <div>
+
+  <ul class="tabs">
+    <li><a href="{% url djra.radmin.views.user_detail username=raduser.username %}">Basic</a></li>
+    <li class="active"><a href="{% url djra.radmin.views.user_sessions username=raduser.username %}">Session History</a></li>
+  </ul>
+  
+  <table class="zebra-striped">
+    <thead>
+      <tr>
+        <th>Start Time</th>
+        <th>Stop Time</th>
+        <th>Sent</th>
+        <th>Received</th>
+        <th>From IP</th>
+        <th>VPN IP</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% load paging_extras %}
+
+      {% paginate sessions from request as results False %}
+  
+      {% for acct in results.objects %}
+      <tr>
+        <td>{{ acct.acctstarttime|date:"Y-m-d H:i:s" }}</td>
+        <td>{% if acct.acctstoptime %}{{ acct.acctstoptime|date:"Y-m-d H:i:s" }} {% endif %}</td>
+        <td>{{ acct.acctinputoctets|filesizeformat }}</td>
+        <td>{{ acct.acctoutputoctets|filesizeformat }}</td>
+        <td>{{ acct.callingstationid }}</td>
+        <td>{{ acct.framedipaddress  }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {{ results.paging }}
+ </div>
+</div>
+{% endblock %}
+
+

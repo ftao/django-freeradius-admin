@@ -5,5 +5,6 @@ urlpatterns = patterns('djra.radmin.views',
     url(r'^users/$', 'users'), 
     url(r'^users/create/$', 'create_user'), 
     url(r'^user/(?P<username>[\w\.@\-]+)/$', 'user_detail'), 
+    url(r'^user/(?P<username>[\w\.@\-]+)/sessions/$', 'user_sessions'), 
     url(r'^groups/$', 'groups'), 
 )
