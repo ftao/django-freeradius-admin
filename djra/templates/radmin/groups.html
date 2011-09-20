@@ -1,0 +1,51 @@
+{% extends "radmin/base.html" %}
+{% load i18n %}
+
+{% block title %}Groups - Djra{% endblock %}
+{% block extra_head %}
+<script type="text/javascript">
+$(function(){
+  set_top_nav('groups');
+});
+</script>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+  <div class="page-header">
+    <h1>Groups</h1>
+  </div>
+  <div>
+    <div class="row">
+      <p class="pull-right">
+        <a href="#" class="btn">Create Group</a>
+      </p>
+    </div>
+
+    <div class="row">
+      <table class="zebra-striped">
+        <thead>
+          <tr>
+            <th>Group</th>
+            <th>Simulation Use Count</th>
+            <th>User Count</th>
+          </tr>
+        </thead>
+      {% for result in groups %}
+        <tbody>
+          <tr>
+            <td class="cell-groupname">{{ result.groupname }}</td>
+            <td class="cell-simulation-use-count"><span>{{ result.simultaneous_use|default:'-' }}</span></td>
+            <td>{{ result.user_count }}</td>
+          </tr>
+        </tbody>
+      {% endfor %}
+      </table>
+      {{ results.paging }}
+    </div>
+  </div>
+      
+</div>
+{% endblock %}
+
+

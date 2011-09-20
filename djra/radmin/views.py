@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 
 from freeradius.models import Radusergroup,Radcheck,Radgroupcheck,Radacct
-from djra.api.models import RadUser, get_radgroup_count
+from djra.api.models import RadUser, get_groups, get_radgroup_count
 from djra.radmin.forms import RadUserFilterForm,RadUserForm,NewRadUserForm
 
 
@@ -69,6 +69,7 @@ def user_detail(request, username):
     )
 
 def user_sessions(request, username):
+
     try:
         raduser = RadUser.objects.get(username=username)
     except RadUser.DoesNotExist:
@@ -88,11 +89,14 @@ def create_user(request):
             username=form.cleaned_data['username']
             raduser, created = RadUser.objects.get_or_create(username=username,
                                                              defaults={'value' : form.cleaned_data['password']})
-            raduser.update(password=form.cleaned_data['password'],
-                           is_suspended=form.cleaned_data['is_suspended'],
-                           groups=form.cleaned_data['groups'].split(','))
-            messages.success(request, 'User %s created.' %username)
-            return HttpResponseRedirect(reverse('djra.radmin.views.user_detail', kwargs={'username' : username}))
+            if not created:
+                messages.error(request, 'User %s already exists.' %username)
+            else:    
+                raduser.update(password=form.cleaned_data['password'],
+                            is_suspended=form.cleaned_data['is_suspended'],
+                            groups=form.cleaned_data['groups'].split(','))
+                messages.success(request, 'User %s created.' %username)
+                return HttpResponseRedirect(reverse('djra.radmin.views.user_detail', kwargs={'username' : username}))
     else:
         form = NewRadUserForm()
         
@@ -103,20 +107,9 @@ def create_user(request):
     )
 
 def groups(request):
-    query_set = RadUser.objects.all()
-    filter_form = RadUserFilterForm(request.GET)
-    if filter_form.is_valid():
-        is_suspended = filter_form.cleaned_data.get('is_suspended', '')
-        if is_suspended == '0':
-            query_set = RadUser.objects.query_suspended_user()
-        elif is_suspended == '1':
-            query_set = RadUser.objects.query_active_user()
-            
-        q = filter_form.cleaned_data.get('username', '')
-        if q:
-            query_set = query_set.filter(username__icontains=q)
+    groups = get_groups()
     return render_to_response(
         'radmin/groups.html',
-        {'query_set' : query_set, 'filter_form' : filter_form, 'request' : request},
+        {'groups' : groups, 'request' : request},
         context_instance = RequestContext(request)
     )

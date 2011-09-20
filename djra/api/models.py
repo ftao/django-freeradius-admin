@@ -128,3 +128,26 @@ def get_radgroup_count():
 
     return len(set(groups))
 
+def get_groups():
+    groups = list(Radusergroup.objects.values_list('groupname', flat=True).distinct())
+    groups += list(Radgroupcheck.objects.values_list('groupname', flat=True).distinct())
+    groups = set(groups)
+    return [RadGroup(groupname) for groupname in groups]
+
+   
+class RadGroup(object):
+
+    def __init__(self, groupname):
+        self.groupname = groupname
+
+    @property
+    def simultaneous_use(self):
+        try:
+            return Radgroupcheck.objects.get(groupname=self.groupname,
+                attribute='Simultaneous-Use', op=':=').value
+        except Radgroupcheck.DoesNotExist:
+            return None
+            
+    @property
+    def user_count(self):
+        return Radusergroup.objects.filter(groupname=self.groupname).values('username').distinct().count()
