@@ -18,7 +18,7 @@ $(function(){
   <div>
     <div class="row">
       <p class="pull-right">
-        <a href="#" class="btn">Create Group</a>
+        <a href="{% url djra.radmin.views.create_group %}" class="btn">Create Group</a>
       </p>
     </div>
 
@@ -34,7 +34,7 @@ $(function(){
       {% for result in groups %}
         <tbody>
           <tr>
-            <td class="cell-groupname">{{ result.groupname }}</td>
+            <td class="cell-groupname"><a href="{% url djra.radmin.views.group_detail groupname=result.groupname %}">{{ result.groupname }}</a></td>
             <td class="cell-simulation-use-count"><span>{{ result.simultaneous_use|default:'-' }}</span></td>
             <td>{{ result.user_count }}</td>
           </tr>

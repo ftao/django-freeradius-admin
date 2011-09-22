@@ -2,12 +2,14 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseForbidden,HttpResponse,HttpResponseBadRequest
+from django.http import HttpResponseNotFound
 from django.conf import settings
 from django.contrib import messages
 
 from freeradius.models import Radusergroup,Radcheck,Radgroupcheck,Radacct
-from djra.api.models import RadUser, get_groups, get_radgroup_count
+from djra.api.models import RadUser, get_groups, get_radgroup_count, get_group, RadGroup
 from djra.radmin.forms import RadUserFilterForm,RadUserForm,NewRadUserForm
+from djra.radmin.forms import NewRadGroupForm,RadGroupForm
 
 
 def home(request):
@@ -113,3 +115,52 @@ def groups(request):
         {'groups' : groups, 'request' : request},
         context_instance = RequestContext(request)
     )
+
+def create_group(request):
+    if request.method == 'POST':
+        form = NewRadGroupForm(request.POST)
+        if form.is_valid():
+            groupname=form.cleaned_data['groupname']
+            simultaneous_use=form.cleaned_data['simultaneous_use']
+            gd = RadGroup(groupname=groupname)
+            gd.set_simultaneous_use(simultaneous_use)
+
+            messages.success(request, 'Group %s created.' %groupname)
+            return HttpResponseRedirect(reverse('djra.radmin.views.group_detail', kwargs={'groupname' : groupname}))
+    else:
+        form = NewRadGroupForm()
+        
+    return render_to_response(
+        'radmin/create_group.html',
+        {'form' : form, 'request' : request},
+        context_instance = RequestContext(request)
+    )
+
+def group_detail(request, groupname):
+    radgroup = get_group(groupname)
+    if radgroup is None:
+        return HttpResponseNotFound('not found')
+
+    if request.method == 'POST':
+        form = RadGroupForm(request.POST)
+        if form.is_valid():
+            assert groupname == form.cleaned_data['groupname']
+            simultaneous_use=form.cleaned_data['simultaneous_use']
+            gd = RadGroup(groupname=groupname)
+            gd.set_simultaneous_use(simultaneous_use)
+
+            messages.success(request, 'Group %s updated.' %groupname)
+            return HttpResponseRedirect(reverse('djra.radmin.views.group_detail', kwargs={'groupname' : groupname}))
+    else:
+        form = RadGroupForm({
+            'groupname' : groupname,
+            'simultaneous_use' : RadGroup(groupname).simultaneous_use
+        })
+ 
+    return render_to_response(
+        'radmin/group_detail.html',
+        {'group' : radgroup, 'form' : form, 'request' : request},
+        context_instance = RequestContext(request)
+    )
+
+

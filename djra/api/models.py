@@ -134,6 +134,14 @@ def get_groups():
     groups = set(groups)
     return [RadGroup(groupname) for groupname in groups]
 
+
+def get_group(groupname):
+    gs = Radgroupcheck.objects.filter(groupname=groupname)
+    if gs.count() > 0:
+        return RadGroup(groupname)
+    gs = Radusergroup.objects.filter(groupname=groupname)
+    if gs.count() > 0:
+        return RadGroup(groupname)
    
 class RadGroup(object):
 
@@ -148,6 +156,17 @@ class RadGroup(object):
         except Radgroupcheck.DoesNotExist:
             return None
             
+    def set_simultaneous_use(self, su):
+        radg, created = Radgroupcheck.objects.get_or_create(
+            groupname=self.groupname,
+            attribute='Simultaneous-Use', op=':=',
+            defaults={'value' : su})
+
+        if not created:
+            radg.value = su
+            radg.save()
+
     @property
     def user_count(self):
         return Radusergroup.objects.filter(groupname=self.groupname).values('username').distinct().count()
+

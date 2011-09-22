@@ -28,3 +28,16 @@ class NewRadUserForm(RadUserForm):
                                 min_length=3, max_length=20, required=True,
                                 error_messages={'invalid' : _('Only letters, digests and .@-_ are allowed.')})
  
+
+class RadGroupForm(forms.Form):
+    groupname = forms.RegexField(r'^[0-9a-zA-Z\-_]+$', 
+                                min_length=3, max_length=20, required=True,
+                                error_messages={'invalid' : _('Only letters, digests and -_ are allowed.')})
+ 
+    simultaneous_use = forms.IntegerField(initial=1)
+
+
+class NewRadGroupForm(RadGroupForm):
+    groupname = forms.RegexField(r'^[0-9a-zA-Z\-_]+$', 
+                                min_length=3, max_length=20, required=True,
+                                error_messages={'invalid' : _('Only letters, digests and -_ are allowed.')})
