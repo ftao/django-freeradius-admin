@@ -8,13 +8,23 @@ class RadUserManager(models.Manager):
         return super(RadUserManager, self).get_query_set().filter(attribute='User-Password', op=':=')
             
     def create(self, **kwargs):
+        if 'password' in kwargs:
+            kwargs['value'] = kwargs['password']
+            del kwargs['password']
         kwargs.update(dict(attribute='User-Password', op=':='))
         return super(RadUserManager, self).create(**kwargs)
 
     def get_or_create(self, **kwargs):
-        if 'default' not in kwargs:
+        if 'defaults' not in kwargs:
             kwargs['defaults'] = {}
+        #query by password is not useful
+        #if 'password' in kwargs:
+        #    kwargs['value'] = kwargs['password']
+        #    del kwargs['password']
         kwargs['defaults'].update(dict(attribute='User-Password', op=':='))
+        if 'password' in kwargs['defaults']:
+            kwargs['defaults']['value'] = kwargs['defaults']['password']
+            del kwargs['defaults']['password']
         return super(RadUserManager, self).get_or_create(**kwargs)
  
     def count_info(self):

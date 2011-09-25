@@ -38,5 +38,15 @@
       "value": "RhatoO", 
       "op": ":="
     }
+  },
+  {
+    "pk": 10, 
+    "model": "freeradius.radcheck", 
+    "fields": {
+      "username": "gudu", 
+      "attribute": "Auth-Type", 
+      "value": "Reject", 
+      "op": ":="
+    }
   }
 ]

@@ -15,7 +15,7 @@ class RadUserForm(forms.Form):
     password = forms.CharField(max_length=20)
     is_suspended = forms.BooleanField(required=False)
     groups = forms.RegexField(r'^[0-9a-zA-Z\._,]+$', max_length=50, initial='default', required=False,
-                             help_text=_('comman seprated group list, eg "default,test"'),
+                             help_text=_('comma seprated group list, eg "default,test"'),
                              error_messages={'invalid' : _('Only letters, digests and ._ are allowed as group name.')})
 
     def clean_groups(self):

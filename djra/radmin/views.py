@@ -30,9 +30,9 @@ def users(request):
     if filter_form.is_valid():
         is_suspended = filter_form.cleaned_data.get('is_suspended', '')
         if is_suspended == '0':
-            query_set = RadUser.objects.query_suspended_user()
-        elif is_suspended == '1':
             query_set = RadUser.objects.query_active_user()
+        elif is_suspended == '1':
+            query_set = RadUser.objects.query_suspended_user()
             
         q = filter_form.cleaned_data.get('username', '')
         if q:
@@ -162,5 +162,4 @@ def group_detail(request, groupname):
         {'group' : radgroup, 'form' : form, 'request' : request},
         context_instance = RequestContext(request)
     )
-
 

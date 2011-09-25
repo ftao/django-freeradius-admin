@@ -64,7 +64,7 @@ class RadUserHandler(BaseHandler):
         groups = data['groups'].split(',')
         is_suspended = data['is_suspended']
 
-        record, created = RadUser.objects.get_or_create(username=username, defaults={'value':password})
+        record, created = RadUser.objects.get_or_create(username=username, defaults={'password':password})
  
         if not created:
             return rc.DUPLICATE_ENTRY

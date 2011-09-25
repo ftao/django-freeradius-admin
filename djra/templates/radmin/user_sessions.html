@@ -39,7 +39,7 @@ $(function(){
       {% paginate sessions from request as results False %}
   
       {% for acct in results.objects %}
-      <tr>
+      <tr {% if not acct.acctstoptime %}class="highlight"{% endif %}>
         <td>{{ acct.acctstarttime|date:"Y-m-d H:i:s" }}</td>
         <td>{% if acct.acctstoptime %}{{ acct.acctstoptime|date:"Y-m-d H:i:s" }} {% endif %}</td>
         <td>{{ acct.acctinputoctets|filesizeformat }}</td>
