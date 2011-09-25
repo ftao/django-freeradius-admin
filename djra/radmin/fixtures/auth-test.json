@@ -1,0 +1,20 @@
+[
+  {
+    "pk": 1, 
+    "model": "auth.user", 
+    "fields": {
+      "username": "ftao", 
+      "first_name": "", 
+      "last_name": "", 
+      "is_active": true, 
+      "is_superuser": true, 
+      "is_staff": true, 
+      "last_login": "2011-09-25 08:47:46", 
+      "groups": [], 
+      "user_permissions": [], 
+      "password": "sha1$2bbd1$e2864386663c73d17bd43ccf66c90a6ddf5753b3", 
+      "email": "ftao@ftao.org", 
+      "date_joined": "2011-09-04 08:45:46"
+    }
+  }
+]

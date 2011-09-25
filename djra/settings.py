@@ -129,9 +129,11 @@ INSTALLED_APPS = (
     'piston',
     'freeradius',
     'djra.api',
+    'djra.radmin',
 )
 
 LOGIN_REDIRECT_URL = '/radmin/'
+LOGIN_URL = '/account/login/'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

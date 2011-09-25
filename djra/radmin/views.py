@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden,HttpResponse
 from django.http import HttpResponseNotFound
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from freeradius.models import Radusergroup,Radcheck,Radgroupcheck,Radacct
 from djra.api.models import RadUser, get_groups, get_radgroup_count, get_group, RadGroup
@@ -12,6 +13,7 @@ from djra.radmin.forms import RadUserFilterForm,RadUserForm,NewRadUserForm
 from djra.radmin.forms import NewRadGroupForm,RadGroupForm
 
 
+@login_required
 def home(request):
     user_count = RadUser.objects.count_info()
     group_count = get_radgroup_count()
@@ -24,6 +26,7 @@ def home(request):
         context_instance = RequestContext(request)
     )
 
+@login_required
 def users(request):
     query_set = RadUser.objects.all()
     filter_form = RadUserFilterForm(request.GET)
@@ -43,6 +46,7 @@ def users(request):
         context_instance = RequestContext(request)
     )
 
+@login_required
 def user_detail(request, username):
     try:
         raduser = RadUser.objects.get(username=username)
@@ -56,6 +60,7 @@ def user_detail(request, username):
                            is_suspended=form.cleaned_data['is_suspended'],
                            groups=form.cleaned_data['groups'].split(','))
             messages.success(request, 'User %s saved.' %raduser.username)
+            return HttpResponseRedirect(reverse('djra.radmin.views.user_detail', kwargs={'username' : username}))
     else:
         data = {
             u'username' : raduser.username,
@@ -70,6 +75,7 @@ def user_detail(request, username):
         context_instance = RequestContext(request)
     )
 
+@login_required
 def user_sessions(request, username):
 
     try:
@@ -84,6 +90,7 @@ def user_sessions(request, username):
     )
 
 
+@login_required
 def create_user(request):
     if request.method == 'POST':
         form = NewRadUserForm(request.POST)
@@ -108,6 +115,7 @@ def create_user(request):
         context_instance = RequestContext(request)
     )
 
+@login_required
 def groups(request):
     groups = get_groups()
     return render_to_response(
@@ -116,6 +124,7 @@ def groups(request):
         context_instance = RequestContext(request)
     )
 
+@login_required
 def create_group(request):
     if request.method == 'POST':
         form = NewRadGroupForm(request.POST)
@@ -136,6 +145,7 @@ def create_group(request):
         context_instance = RequestContext(request)
     )
 
+@login_required
 def group_detail(request, groupname):
     radgroup = get_group(groupname)
     if radgroup is None:
