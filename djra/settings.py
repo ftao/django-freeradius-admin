@@ -15,6 +15,14 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'djra',                      # Or path to database file if using sqlite3.
+        'USER': 'radius',                      # Not used with sqlite3.
+        'PASSWORD': 'radius-dev-pass',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    },
+    'radius': {
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'radius',                      # Or path to database file if using sqlite3.
         'USER': 'radius',                      # Not used with sqlite3.
         'PASSWORD': 'radius-dev-pass',                  # Not used with sqlite3.
@@ -22,6 +30,7 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
+
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -127,10 +136,12 @@ INSTALLED_APPS = (
     'paging',
     'test_utils',
     'piston',
-    'freeradius',
+    'djra.freeradius',
     'djra.api',
     'djra.radmin',
 )
+
+DATABASE_ROUTERS = ['djra.router.RadiusRouter']
 
 LOGIN_REDIRECT_URL = '/radmin/'
 LOGIN_URL = '/account/login/'
@@ -157,3 +168,8 @@ LOGGING = {
         },
     }
 }
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
