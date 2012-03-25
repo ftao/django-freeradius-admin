@@ -10,6 +10,7 @@ from django.test import Client
 from django.utils import simplejson as json
 
 class RadUserTest(TestCase):
+    multi_db = True
     fixtures = ['radcheck-test.json', 'radusergroup-test.json']
 
     def setUp(self):

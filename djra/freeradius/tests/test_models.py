@@ -4,6 +4,7 @@ from django.utils import simplejson as json
 from djra.api.models import RadUser
 
 class RadUserTest(TestCase):
+    multi_db = True
     fixtures = ['radcheck-test.json', 'radusergroup-test.json']
 
     def test_properties(self):
@@ -12,7 +13,6 @@ class RadUserTest(TestCase):
         self.assertEqual(ru.is_suspended, False)
         #Note: just write ru.groups will not work
         self.assertEqual(list(ru.groups), [u'default'])
-
 
     def test_operations(self):
         ru = RadUser.objects.get(username='demo')

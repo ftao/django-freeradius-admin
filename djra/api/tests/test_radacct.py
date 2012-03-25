@@ -3,6 +3,7 @@ from django.test import Client
 from django.utils import simplejson as json
 
 class RadAcctTest(TestCase):
+    multi_db = True
     fixtures = ['radacct-test.json',]
 
     def setUp(self):

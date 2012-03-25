@@ -8,14 +8,12 @@ class RadiusRouter(object):
     def db_for_read(self, model, **hints):
         "Point all operations on myapp models to 'other'"
         if model._meta.app_label == _RADIUS_APP_NAME:
-            print _RADIUS_DB_NAME
             return _RADIUS_DB_NAME
         return None
 
     def db_for_write(self, model, **hints):
         "Point all operations on myapp models to 'other'"
         if model._meta.app_label == _RADIUS_APP_NAME:
-            print _RADIUS_DB_NAME
             return _RADIUS_DB_NAME
         return None
 

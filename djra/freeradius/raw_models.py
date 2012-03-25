@@ -110,6 +110,7 @@ class Radacct(models.Model):
     acctsessionid = models.CharField(max_length=32)
     acctuniqueid = models.CharField(max_length=32)
     username = models.CharField(max_length=253, null=True)
+    groupname = models.CharField(max_length=253, null=True)
     realm = models.CharField(max_length=64, null=True)
     nasipaddress = models.IPAddressField()
     nasportid = models.CharField(max_length=15, null=True)

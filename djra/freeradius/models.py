@@ -108,13 +108,14 @@ class RadUser(Radcheck):
     def change_groups(self, groups):
         username = self.username
         old_groups = self.groups
-        if set(old_groups) != set(groups):
+        if old_groups != groups:
             to_delete = set(old_groups) - set(groups)
             Radusergroup.objects.filter(username=username, groupname__in=to_delete).delete()
 
-            to_add = set(groups) - set(old_groups)
-            for group in to_add:
-                Radusergroup.objects.create(username=username, groupname=group)
+            for p, group in enumerate(groups):
+                rup,created = Radusergroup.objects.get_or_create(username=username, groupname=group, defaults={'priority':p})
+                rup.priority = p
+                rup.save()
 
     def update(self, password=None, is_suspended=None, groups=None):
         #update password 

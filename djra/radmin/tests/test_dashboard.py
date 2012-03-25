@@ -3,6 +3,7 @@ from django.test import Client
 from django.utils import simplejson as json
 
 class DashboardTest(TestCase):
+    multi_db = True
     fixtures = ['radcheck-test.json', 'radusergroup-test.json', 'auth-test.json']
 
     def setUp(self):
