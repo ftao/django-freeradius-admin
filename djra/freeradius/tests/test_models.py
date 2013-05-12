@@ -5,42 +5,42 @@ from djra.api.models import RadUser
 
 class RadUserTest(TestCase):
     multi_db = True
-    fixtures = ['radcheck-test.json', 'radusergroup-test.json']
+    fixtures = ['radcheck-test.json', 'radusergroup-test.json', 'radacct-test.json']
 
     def test_properties(self):
         ru = RadUser.objects.get(username='demo')
         self.assertEqual(ru.password, '31415926')
-        self.assertEqual(ru.is_suspended, False)
+        self.assertEqual(ru.is_active, True)
         #Note: just write ru.groups will not work
         self.assertEqual(list(ru.groups), [u'default'])
 
     def test_operations(self):
         ru = RadUser.objects.get(username='demo')
 
-        ru.change_password('123')
+        ru.set_password('123')
         ru = RadUser.objects.get(username='demo')
         self.assertEqual(ru.password, '123')
 
-        ru.toggle_suspended(True)
+        ru.set_is_active(False)
         ru = RadUser.objects.get(username='demo')
-        self.assertEqual(ru.is_suspended, True)
+        self.assertEqual(ru.is_active, False)
 
-        ru.change_groups(['abc','other'])
+        ru.set_groups(['abc','other'])
         ru = RadUser.objects.get(username='demo')
         self.assertEqual(list(ru.groups), [u'abc', u'other'])
 
-        ru.update(password='234', is_suspended=False, groups=['d','e'])
+        ru.update(password='234', is_active=True, groups=['d','e'])
         ru = RadUser.objects.get(username='demo')
         self.assertEqual(ru.password, '234')
-        self.assertEqual(ru.is_suspended, False)
+        self.assertEqual(ru.is_active, True)
         self.assertEqual(list(ru.groups), [u'd', u'e'])
 
         ru.update(password='345')
         ru = RadUser.objects.get(username='demo')
-        self.assertEqual(ru.is_suspended, False)
+        self.assertEqual(ru.is_active, True)
         self.assertEqual(list(ru.groups), [u'd', u'e'])
 
-        ru.update(is_suspended=True)
+        ru.update(is_active=False)
         ru = RadUser.objects.get(username='demo')
         self.assertEqual(ru.password, '345')
         self.assertEqual(list(ru.groups), [u'd', u'e'])
@@ -48,14 +48,19 @@ class RadUserTest(TestCase):
         ru.update(groups=['c','d'])
         ru = RadUser.objects.get(username='demo')
         self.assertEqual(ru.password, '345')
-        self.assertEqual(ru.is_suspended, True)
+        self.assertEqual(ru.is_active, False)
 
 
     def test_query(self):
-        au = RadUser.objects.query_active_user()
+        au = RadUser.objects.all().filter_is_active(1)
         self.assertEqual(len(au), 3)
-        su = RadUser.objects.query_suspended_user()
+        su = RadUser.objects.all().filter_is_active(0)
         self.assertEqual(len(su), 1)
+
+        onu = RadUser.objects.all().filter_is_online(1)
+        self.assertEqual(len(onu), 1)
+        ofu = RadUser.objects.all().filter_is_online(0)
+        self.assertEqual(len(ofu), 3)
 
         allu = RadUser.objects.all()
         self.assertEqual(len(allu), 4)

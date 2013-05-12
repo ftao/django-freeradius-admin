@@ -3,7 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 
 class RadUserFilterForm(forms.Form):
     username = forms.CharField(required=False)
-    is_suspended = forms.ChoiceField(choices=[('-1', 'Any'), ('0', 'Active'), ('1', 'Suspended')], initial="-1")
+    is_active = forms.ChoiceField(choices=[('-1', 'Any'), ('1', 'Active'), ('0', 'Suspended')], initial="-1")
+    is_online = forms.ChoiceField(choices=[('-1', 'Any'), ('0', 'Offline'), ('1', 'Online')], initial="-1")
     #group = forms.CharField(required=False)
 
 
@@ -13,7 +14,7 @@ class RadUserForm(forms.Form):
                                 min_length=3, max_length=20, required=True,
                                 error_messages={'invalid' : _('Only letters, digests and .@-_ are allowed.')})
     password = forms.CharField(max_length=20)
-    is_suspended = forms.BooleanField(required=False)
+    is_active = forms.BooleanField(required=False, initial=True)
     groups = forms.RegexField(r'^[0-9a-zA-Z\._,]+$', max_length=50, initial='default', required=False,
                              help_text=_('comma seprated group list, eg "default,test"'),
                              error_messages={'invalid' : _('Only letters, digests and ._ are allowed as group name.')})

@@ -2,10 +2,52 @@ from django.db import models
 from django.db.models import Q
 from .raw_models import *
 
+class RadUserQuerySet(models.query.QuerySet):
+    '''Use this class to define methods on queryset itself.'''
+
+
+    def filter(self, *args, **kwargs):
+        is_online = None
+        is_active = None
+        for k,v in kwargs.items():
+            if k == 'is_online' or k.startswith('is_online__'):
+                is_online = v
+                del kwargs[k]
+            elif k == 'is_active' or k.startswith('is_active__'):
+                is_active = v
+                del kwargs[k]
+
+        q = super(RadUserQuerySet, self).filter(*args, **kwargs)
+        if is_online is not None:
+            q = q.filter_is_online(is_online)
+        if is_active is not None:
+            q = q.filter_is_active(is_active)
+        return q
+
+    def filter_is_online(self, is_online):
+        neg = "" if is_online else "NOT"
+        return self.extra(where=['''
+            radcheck.username %s IN (
+                SELECT username FROM radacct
+                WHERE acctstoptime IS NULL
+            )
+            ''' %neg])
+
+    def filter_is_active(self, is_active):
+        neg = "NOT" if is_active else ""
+        return self.extra(where=['''
+            radcheck.username %s IN (
+                SELECT rc.username FROM radcheck as rc 
+                WHERE attribute='Auth-Type'
+                      AND op=':='
+                      AND value='Reject'
+            )
+            ''' %neg])
+
 class RadUserManager(models.Manager):
     def get_query_set(self):
-        return super(RadUserManager, self).get_query_set().filter(attribute='User-Password', op=':=')
-            
+        return RadUserQuerySet(self.model).filter(attribute='User-Password', op=':=')
+
     def create(self, **kwargs):
         if 'password' in kwargs:
             kwargs['value'] = kwargs['password']
@@ -46,27 +88,6 @@ class RadUserManager(models.Manager):
             .distinct())
         return suspended_users
         
-    def query_active_user(self):
-        return self.extra(where=['''
-            NOT EXISTS(
-                SELECT 1 FROM radcheck as rc 
-                WHERE rc.username = radcheck.username
-                  AND attribute='Auth-Type'
-                  AND op=':='
-                  AND value='Reject'
-            )
-            '''])
-
-    def query_suspended_user(self):
-        return self.extra(where=['''
-            EXISTS(
-                SELECT 1 FROM radcheck as rc 
-                WHERE rc.username = radcheck.username
-                  AND attribute='Auth-Type'
-                  AND op=':='
-                  AND value='Reject'
-            )
-            '''])
 
 class RadUser(Radcheck):
     objects = RadUserManager()
@@ -75,37 +96,46 @@ class RadUser(Radcheck):
         proxy = True
 
     @property
-    def password(self):
+    def is_online(self):
+        return Radacct.objects.filter(
+            username=self.username,
+            acctstoptime=None).exists()
+ 
+    def get_password(self):
         return self.value
 
-    @property
-    def is_suspended(self):
-        return Radcheck.objects.filter(
+    def set_password(self, password):
+        self.value = password
+        self.save()
+
+    password = property(get_password, set_password)
+
+    def get_is_active(self):
+        return not Radcheck.objects.filter(
             username=self.username,
             attribute='Auth-Type',
             op=':=',
             value='Reject').exists()
-    
-    @property
-    def groups(self):
+
+        return not self.is_suspended
+
+    def set_is_active(self, is_active):
+        username = self.username
+        if not is_active:
+            Radcheck.objects.get_or_create(username=username, attribute='Auth-Type', op=':=', value='Reject')
+        else:
+            Radcheck.objects.filter(username=username, attribute='Auth-Type', op=':=', value='Reject').delete()
+
+    is_active = property(get_is_active, set_is_active)
+
+    def get_groups(self):
         return (Radusergroup.objects
             .filter(username=self.username)
             .order_by('priority')
             .values_list('groupname', flat=True)
             )
-        
-    def change_password(self, password):
-        self.value = password
-        self.save()
-
-    def toggle_suspended(self, is_suspended):
-        username = self.username
-        if is_suspended:
-            Radcheck.objects.get_or_create(username=username, attribute='Auth-Type', op=':=', value='Reject')
-        else:
-            Radcheck.objects.filter(username=username, attribute='Auth-Type', op=':=', value='Reject').delete()
-    
-    def change_groups(self, groups):
+ 
+    def set_groups(self, groups):
         username = self.username
         old_groups = self.groups
         if old_groups != groups:
@@ -117,19 +147,21 @@ class RadUser(Radcheck):
                 rup.priority = p
                 rup.save()
 
-    def update(self, password=None, is_suspended=None, groups=None):
+    groups = property(get_groups, set_groups)
+
+    def update(self, password=None, is_active=None, groups=None):
         #update password 
         record = self
         if password is not None and record.value != password:
-            self.change_password(password)
+            self.set_password(password)
 
         #update valid state
-        if is_suspended is not None:
-            self.toggle_suspended(is_suspended)
-            
+        if is_active is not None:
+            self.set_is_active(is_active)
+
         #update groups 
         if groups is not None and type(groups) in (list, tuple):
-            self.change_groups(groups)
+            self.set_groups(groups)
 
 
 def get_radgroup_count():
@@ -155,8 +187,9 @@ def get_group(groupname):
    
 class RadGroup(object):
 
-    def __init__(self, groupname):
+    def __init__(self, groupname=None, attrs=None):
         self.groupname = groupname
+        self.attrs = attrs
 
     @property
     def simultaneous_use(self):

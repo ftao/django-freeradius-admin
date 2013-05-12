@@ -31,12 +31,18 @@ def users(request):
     query_set = RadUser.objects.all()
     filter_form = RadUserFilterForm(request.GET)
     if filter_form.is_valid():
-        is_suspended = filter_form.cleaned_data.get('is_suspended', '')
-        if is_suspended == '0':
-            query_set = RadUser.objects.query_active_user()
-        elif is_suspended == '1':
-            query_set = RadUser.objects.query_suspended_user()
+        is_active = filter_form.cleaned_data.get('is_active', '')
+        if is_active == '1':
+            query_set = query_set.filter_is_active(True)
+        elif is_active == '0':
+            query_set = query_set.filter_is_active(False)
             
+        is_online = filter_form.cleaned_data.get('is_online', '')
+        if is_online == '0':
+            query_set = query_set.filter_is_online(False)
+        elif is_online == '1':
+            query_set = query_set.filter_is_online(True)
+ 
         q = filter_form.cleaned_data.get('username', '')
         if q:
             query_set = query_set.filter(username__icontains=q)
@@ -57,7 +63,7 @@ def user_detail(request, username):
         if form.is_valid():
             assert raduser.username == form.cleaned_data['username']
             raduser.update(password=form.cleaned_data['password'],
-                           is_suspended=form.cleaned_data['is_suspended'],
+                           is_active=form.cleaned_data['is_active'],
                            groups=form.cleaned_data['groups'].split(','))
             messages.success(request, 'User %s saved.' %raduser.username)
             return HttpResponseRedirect(reverse('djra.radmin.views.user_detail', kwargs={'username' : username}))
@@ -65,7 +71,7 @@ def user_detail(request, username):
         data = {
             u'username' : raduser.username,
             u'password' : raduser.password,
-            u'is_suspended' : raduser.is_suspended, 
+            u'is_active' : raduser.is_active, 
             u'groups' : u','.join(raduser.groups),
         }
         form = RadUserForm(data)
@@ -102,7 +108,7 @@ def create_user(request):
                 messages.error(request, 'User %s already exists.' %username)
             else:    
                 raduser.update(password=form.cleaned_data['password'],
-                            is_suspended=form.cleaned_data['is_suspended'],
+                            is_active=form.cleaned_data['is_active'],
                             groups=form.cleaned_data['groups'].split(','))
                 messages.success(request, 'User %s created.' %username)
                 return HttpResponseRedirect(reverse('djra.radmin.views.user_detail', kwargs={'username' : username}))

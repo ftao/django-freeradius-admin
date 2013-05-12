@@ -23,14 +23,14 @@ class UsersTest(TestCase):
     def test_user_detail(self):
         self.client.login(username='ftao', password='123456')
         resp = self.client.post('/radmin/user/demo/',
-            {'username' : 'demo', 'password': '1', 'is_suspended' : 'on', 'groups' : 'default,test'})
+            {'username' : 'demo', 'password': '1', 'is_active' : 'on', 'groups' : 'default,test'})
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp['Location'], 'http://testserver/radmin/user/demo/')
 
         resp = self.client.get('/radmin/user/demo/')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.context['form'].data, 
-            {u'username': 'demo', u'is_suspended': True, u'groups' : 'default,test', u'password' : '1'})
+            {u'username': 'demo', u'is_active': True, u'groups' : 'default,test', u'password' : '1'})
 
     def test_user_session(self):
         self.client.login(username='ftao', password='123456')

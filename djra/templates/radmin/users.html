@@ -37,6 +37,7 @@ $(function(){
           <th>Password</th>
           <th>Groups</th>
           <th>Is Active</th>
+          <th>Online Status</th>
         </tr>
       </thead>
       <tbody>
@@ -46,6 +47,7 @@ $(function(){
           <td class="cell-password"><span>{{ result.password }}</span></td>
           <td>{{ result.groups|join:',' }}</td>
           <td class="cell-is-active"><span {% if result.is_suspended %} class="red">Suspended {% else %}  class="green">Active{% endif %}</span></td>
+          <td class="cell-is-online"><span {% if result.is_online %} class="red">Online {% else %}  class="green">Offline{% endif %}</span></td>
         </tr>
     {% endfor %}
       </tbody>

@@ -135,7 +135,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'paging',
     'test_utils',
-    'piston',
+    'tastypie',
     'djra.freeradius',
     'djra.api',
     'djra.radmin',
