@@ -18,8 +18,8 @@ $(function(){
   <div>
 
   <ul class="tabs">
-    <li class="active"><a href="{% url djra.radmin.views.user_detail username=raduser.username %}">Basic</a></li>
-    <li><a href="{% url djra.radmin.views.user_sessions username=raduser.username %}">Session History</a></li>
+    <li class="active"><a href="{% url "djra.radmin.views.user_detail" username=raduser.username %}">Basic</a></li>
+    <li><a href="{% url "djra.radmin.views.user_sessions" username=raduser.username %}">Session History</a></li>
   </ul>
   
   <form method="POST">

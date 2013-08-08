@@ -24,7 +24,7 @@ $(function(){
       </form>
       </div>
       <div class="span2">
-        <a href="{% url djra.radmin.views.create_user %}" class="btn">Add User</a>
+        <a href="{% url "djra.radmin.views.create_user" %}" class="btn">Add User</a>
       </div>
     </div>
     {% load paging_extras %}
@@ -43,7 +43,7 @@ $(function(){
       <tbody>
     {% for result in results.objects %}
         <tr>
-          <td class="cell-username"><a href="{% url djra.radmin.views.user_detail username=result.username %}">{{ result.username }}</a></td>
+          <td class="cell-username"><a href="{% url "djra.radmin.views.user_detail" username=result.username %}">{{ result.username }}</a></td>
           <td class="cell-password"><span>{{ result.password }}</span></td>
           <td>{{ result.groups|join:',' }}</td>
           <td class="cell-is-active"><span {% if result.is_suspended %} class="red">Suspended {% else %}  class="green">Active{% endif %}</span></td>

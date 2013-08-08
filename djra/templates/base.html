@@ -21,17 +21,17 @@
         <div class="container"> 
           <h3><a href="/">FreeradiusAdmin</a></h3> 
           <ul class="nav"> 
-            <li id="top-nav-home"><a href="{% url djra.radmin.views.home %}">Dashboard</a></li> 
-            <li id="top-nav-users"><a href="{% url djra.radmin.views.users %}">Users</a></li>
-            <li id="top-nav-groups"><a href="{% url djra.radmin.views.groups %}">Groups</a></li>
+            <li id="top-nav-home"><a href="{% url "djra.radmin.views.home" %}">Dashboard</a></li> 
+            <li id="top-nav-users"><a href="{% url "djra.radmin.views.users" %}">Users</a></li>
+            <li id="top-nav-groups"><a href="{% url "djra.radmin.views.groups" %}">Groups</a></li>
           </ul> 
           {% block header_auth %}
           <ul class="nav secondary-nav">
           {% if user.is_authenticated %}
             <li><span>{{ user.username }}</span></li>
-            <li><a href="{% url django.contrib.auth.views.logout %}">Logout</a></li>
+            <li><a href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
           {% else %}
-            <li><a href="{% url django.contrib.auth.views.login %}">Login</a></li>
+            <li><a href="{% url "django.contrib.auth.views.login" %}">Login</a></li>
           {% endif %}
           </ul>
           {% endblock %}

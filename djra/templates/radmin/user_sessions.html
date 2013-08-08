@@ -18,8 +18,8 @@ $(function(){
   <div>
 
   <ul class="tabs">
-    <li><a href="{% url djra.radmin.views.user_detail username=raduser.username %}">Basic</a></li>
-    <li class="active"><a href="{% url djra.radmin.views.user_sessions username=raduser.username %}">Session History</a></li>
+    <li><a href="{% url "djra.radmin.views.user_detail" username=raduser.username %}">Basic</a></li>
+    <li class="active"><a href="{% url "djra.radmin.views.user_sessions" username=raduser.username %}">Session History</a></li>
   </ul>
   
   <table class="zebra-striped">
