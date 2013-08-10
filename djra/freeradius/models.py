@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Q
 from .raw_models import *
 
 class RadUserQuerySet(models.query.QuerySet):

@@ -2,14 +2,14 @@
 from django.conf import settings
 from django.contrib import admin
 
-from freeradius.models import Radpostauth
-from freeradius.models import Radreply
-from freeradius.models import Radusergroup
-from freeradius.models import Radcheck
-from freeradius.models import Radgroupcheck
-from freeradius.models import Radgroupreply
-from freeradius.models import Radippool
-from freeradius.models import Radacct
+from .models import Radpostauth
+from .models import Radreply
+from .models import Radusergroup
+from .models import Radcheck
+from .models import Radgroupcheck
+from .models import Radgroupreply
+from .models import Radippool
+from .models import Radacct
 
 class RadpostauthAdmin(admin.ModelAdmin):
     pass
@@ -57,10 +57,10 @@ admin.site.register(Radippool,RadippoolAdmin)
 admin.site.register(Radacct,RadacctAdmin)
 
 if getattr(settings, 'FREERADIUS_ENABLE_EXT_MODELS', False):
-    from freeradius.models import Attributelist
-    from freeradius.models import Nas
-    from freeradius.models import Realmgroup
-    from freeradius.models import Realms
+    from .models import Attributelist
+    from .models import Nas
+    from .models import Realmgroup
+    from .models import Realms
 
 
     class AttributelistAdmin(admin.ModelAdmin):

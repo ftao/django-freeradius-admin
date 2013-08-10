@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from freeradius.models import Radusergroup,Radcheck,Radgroupcheck,Radacct
+from djra.freeradius.models import Radusergroup,Radcheck,Radgroupcheck,Radacct
 from djra.api.models import RadUser, get_groups, get_radgroup_count, get_group, RadGroup
 from djra.radmin.forms import RadUserFilterForm,RadUserForm,NewRadUserForm
 from djra.radmin.forms import NewRadGroupForm,RadGroupForm
