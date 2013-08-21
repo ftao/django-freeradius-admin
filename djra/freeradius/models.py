@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from tastypie.models import create_api_key
 from .raw_models import *
 
 class RadUserQuerySet(models.query.QuerySet):
@@ -212,3 +214,5 @@ class RadGroup(object):
     def user_count(self):
         return Radusergroup.objects.filter(groupname=self.groupname).values('username').distinct().count()
 
+
+models.signals.post_save.connect(create_api_key, sender=User)

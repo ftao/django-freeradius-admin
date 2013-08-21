@@ -4,6 +4,8 @@ import itertools
 from tastypie.resources import ModelResource,Resource
 from tastypie import fields,bundle
 from tastypie.exceptions import NotFound
+from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, MultiAuthentication
+from tastypie.authorization import DjangoAuthorization
 
 from .models import RadUser,Radgroupcheck,RadGroup
 
@@ -25,6 +27,8 @@ class RadUserResource(ModelResource):
             "is_online" : ('exact',),
             "is_active" : ('exact',)
         }
+        authentication = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
+        authorization = DjangoAuthorization()
 
 
     def obj_create(self, bundle, **kwargs):
@@ -57,6 +61,9 @@ class RadGroupResource(Resource):
         object_class = RadGroup
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get']
+
+        authentication = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
+        authorization = DjangoAuthorization()
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
