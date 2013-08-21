@@ -4,17 +4,26 @@
   "model": "auth.user", 
   "fields": {
     "username": "admin", 
-    "first_name": "", 
+    "first_name": "ADMIN", 
     "last_name": "", 
     "is_active": true, 
     "is_superuser": true, 
     "is_staff": true, 
-    "last_login": "2013-08-08T09:19:36", 
+    "last_login": "2013-08-08T09:19:36Z", 
     "groups": [], 
     "user_permissions": [], 
     "password": "pbkdf2_sha256$10000$QOOiSU4rPCDm$QcKJdU7tfS0rFolfd2OEHNBNwjCJtw1EeZWtsVa46wA=", 
     "email": "admin@example.com", 
-    "date_joined": "2013-08-08T09:19:18"
+    "date_joined": "2013-08-08T09:19:18Z"
+  }
+},
+{
+  "pk": 1, 
+  "model": "tastypie.apikey", 
+  "fields": {
+    "user": 1, 
+    "key": "eb38df4f1096a7e68c197eb91641773e", 
+    "created": "2013-08-21T13:11:18Z"
   }
 }
 ]
