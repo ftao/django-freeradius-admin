@@ -143,7 +143,6 @@ INSTALLED_APPS = (
     'test_utils',
     'tastypie',
     'djra.freeradius',
-    'djra.api',
     'djra.radmin',
 )
 
