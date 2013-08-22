@@ -37,7 +37,7 @@ class RadUserResource(ModelResource):
             data['password'] = gen_random_password(6)
 
         raduser = RadUser.objects.create(username=data['username'], password=data['password'])
-        update = {k:data[k] for k in data if k not in ('username', 'password')}
+        update = dict([(k, data[k]) for k in data if k not in ('username', 'password')])
         raduser.update(**update)
 
         return raduser
