@@ -45,7 +45,7 @@ class RadUserResource(ModelResource):
     def obj_update(self, bundle, **kwargs):
         data = bundle.data
         raduser,created = RadUser.objects.get_or_create(username=data['username'])
-        update = {k:data[k] for k in data if k not in ('username',)}
+        update = dict([(k, data[k]) for k in data if k not in ('username',)])
         raduser.update(**update)
         bundle.obj = raduser
 
