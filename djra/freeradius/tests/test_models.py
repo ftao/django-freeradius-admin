@@ -1,7 +1,5 @@
 from django.test import TestCase
-from django.test import Client
-from django.utils import simplejson as json
-from djra.api.models import RadUser
+from djra.freeradius.models import RadUser
 
 class RadUserTest(TestCase):
     multi_db = True

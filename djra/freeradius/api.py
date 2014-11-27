@@ -1,6 +1,7 @@
 import random
 import string
 import itertools
+from django.conf.urls.defaults import url
 from tastypie.resources import ModelResource,Resource
 from tastypie import fields,bundle
 from tastypie.exceptions import NotFound
@@ -29,7 +30,12 @@ class RadUserResource(ModelResource):
         }
         authentication = MultiAuthentication(SessionAuthentication(), ApiKeyAuthentication())
         authorization = DjangoAuthorization()
+        detail_uri_name = 'username'
 
+    def prepend_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/(?P<username>[\w\d_.-]+)/$" % self._meta.resource_name, self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
+        ]
 
     def obj_create(self, bundle, **kwargs):
         data = bundle.data
@@ -44,7 +50,8 @@ class RadUserResource(ModelResource):
 
     def obj_update(self, bundle, **kwargs):
         data = bundle.data
-        raduser,created = RadUser.objects.get_or_create(username=data['username'])
+        username = kwargs.get('username')
+        raduser,created = RadUser.objects.get_or_create(username=username)
         update = dict([(k, data[k]) for k in data if k not in ('username',)])
         raduser.update(**update)
         bundle.obj = raduser

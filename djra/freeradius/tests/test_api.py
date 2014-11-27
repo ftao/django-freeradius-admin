@@ -32,8 +32,8 @@ class RadUserResourceTest(TestCase):
         self.assertEqual(list(ru.groups), [u'default'])
 
         rr = RadUserResource()
-        b = Bundle(data={'username' : 'demo', 'password' : 'newpassword', 'is_active' : False, 'groups' : ['default2']})
-        ru = rr.obj_update(b)
+        b = Bundle(data={'password' : 'newpassword', 'is_active' : False, 'groups' : ['default2']})
+        ru = rr.obj_update(b, username='demo')
 
         self.assertEqual(ru.password, 'newpassword')
         self.assertEqual(ru.is_active, False)
