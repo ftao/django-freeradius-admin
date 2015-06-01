@@ -67,3 +67,8 @@ target/
 __pycache__/
 local_settings.py
 
+### Sqlite3 Databases for debug ###
+djra/data/*.db
+
+### Source Code of PIP deps ###
+src/
