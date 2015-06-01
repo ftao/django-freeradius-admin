@@ -1,7 +1,7 @@
 import random
 import string
 import itertools
-from django.conf.urls.defaults import url
+from django.conf.urls import url
 from tastypie.resources import ModelResource,Resource
 from tastypie import fields,bundle
 from tastypie.exceptions import NotFound
@@ -93,7 +93,7 @@ class RadGroupResource(Resource):
         return groups
 
     def obj_get(self, bundle, **kwargs):
-        groupname = kwargs.get('pk') 
+        groupname = kwargs.get('pk')
         radgc_records =  Radgroupcheck.objects.filter(groupname=groupname)
         if len(radgc_records) == 0:
             raise NotFound

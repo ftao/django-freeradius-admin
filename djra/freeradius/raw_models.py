@@ -51,7 +51,7 @@ class Radreply(models.Model):
 class Radusergroup(models.Model):
     username = models.CharField(max_length=30)
     groupname = models.CharField(max_length=30)
-    priority = models.IntegerField(max_length=11)
+    priority = models.IntegerField()
     #calledstationid = models.CharField(max_length=64)
     def __str__(self):
         return str(self.username)
@@ -91,7 +91,7 @@ class Radgroupreply(models.Model):
 
 class Radippool(models.Model):
     pool_name = models.CharField(max_length=64,help_text='The IP Pool name')
-    framedipaddress = models.IPAddressField(help_text='The users IP address')
+    framedipaddress = models.GenericIPAddressField(help_text='The users IP address')
     nasipaddress = models.CharField(max_length=16)
     callingstationid = models.TextField('Calling-Station-Id', help_text='The MAC Address or CLI of the user')
     expiry_time = models.DateTimeField(help_text='The IP Lease expiry time')
@@ -112,7 +112,7 @@ class Radacct(models.Model):
     username = models.CharField(max_length=253, null=True)
     groupname = models.CharField(max_length=253, null=True)
     realm = models.CharField(max_length=64, null=True)
-    nasipaddress = models.IPAddressField()
+    nasipaddress = models.GenericIPAddressField()
     nasportid = models.CharField(max_length=15, null=True)
     nasporttype = models.CharField(max_length=32, null=True)
     acctstarttime = models.DateTimeField(null=True)
@@ -123,7 +123,7 @@ class Radacct(models.Model):
     acctoutputoctets = models.BigIntegerField(null=True)
     calledstationid = models.CharField(max_length=50, null=True)
     callingstationid = models.CharField(max_length=50, null=True)
-    framedipaddress = models.IPAddressField(null=True)
+    framedipaddress = models.GenericIPAddressField(null=True)
     connectinfo_start = models.CharField(max_length=50, null=True)
     connectinfo_stop = models.CharField(max_length=50, null=True)
     acctterminatecause = models.CharField(max_length=32, null=True)
@@ -199,4 +199,3 @@ if getattr(settings, 'FREERADIUS_ENABLE_EXT_MODELS', False):
         class Meta:
             db_table = 'nas'
             verbose_name_plural = "nas"
-

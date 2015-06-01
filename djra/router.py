@@ -22,7 +22,7 @@ class RadiusRouter(object):
         return None
         #return obj1._meta.app_label == obj2._meta.app_label
 
-    def allow_syncdb(self, db, model):
+    def allow_migrate(self, db, model):
         "Make sure the freeradius app only appears on the 'freeradius' db"
         if db == _RADIUS_DB_NAME:
             return model._meta.app_label == _RADIUS_APP_NAME
