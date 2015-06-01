@@ -20,6 +20,9 @@ $> pip install -r requirements.txt
 ### create sqlite3 databases ###
 $> PYTHONPATH=./ django-admin syncdb --settings=djra.dev_settings
 
+### create radius database ###
+$> sqlite3 djra/data/radius.db < djra/freeradius/schema.sql 
+
 ### start the server ###
 $> PYTHONPATH=./ django-admin runserver --settings=djra.dev_settings
 ```
