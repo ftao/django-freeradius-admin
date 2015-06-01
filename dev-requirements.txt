@@ -1,0 +1,8 @@
+Django
+MySQL-python
+mimeparse
+django-tastypie
+django-templatetag-sugar
+django-paging
+django-test-utils
+gunicorn
