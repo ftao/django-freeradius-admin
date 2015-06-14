@@ -44,7 +44,7 @@ class RadUserQuerySet(models.query.QuerySet):
             ''' %neg])
 
 class RadUserManager(models.Manager):
-    def get_query_set(self):
+    def get_queryset(self):
         return RadUserQuerySet(self.model).filter(attribute='User-Password', op=':=')
 
     def create(self, **kwargs):
