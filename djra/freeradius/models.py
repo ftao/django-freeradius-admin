@@ -173,7 +173,7 @@ def get_groups():
     groups = list(Radusergroup.objects.values_list('groupname', flat=True).distinct())
     groups += list(Radgroupcheck.objects.values_list('groupname', flat=True).distinct())
     groups = set(groups)
-    return [RadGroup(groupname) for groupname in groups]
+    return [RadGroup(groupname) for groupname in groups if groupname]
 
 
 def get_group(groupname):
