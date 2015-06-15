@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.test import Client
-from django.utils import simplejson as json
 
 class UsersTest(TestCase):
     multi_db = True
@@ -36,4 +35,4 @@ class UsersTest(TestCase):
         self.client.login(username='ftao', password='123456')
         resp = self.client.get('/radmin/user/demo/sessions/')
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.content.count(u'<tr'), 5)
+        self.assertEqual(resp.content.count('<tr'), 5)
