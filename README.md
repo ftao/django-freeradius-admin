@@ -1,4 +1,4 @@
-# Django Freeradius Admin
+# Django Freeradius Admin [![Build Status](https://travis-ci.org/ftao/django-freeradius-admin.svg?branch=master)](https://travis-ci.org/ftao/django-freeradius-admin)
 
 
 ## Basic Features
@@ -29,4 +29,4 @@ $> PYTHONPATH=./ django-admin runserver --settings=djra.dev_settings
 
 ## Ansible Playbook Automation
 
-See [vpn-deploy-playbook](https://github.com/ftao/vpn-deploy-playbook) for detail.
+See [django-freeradius-admin](https://github.com/ftao/django-freeradius-admin) for detail.
