@@ -1,0 +1,25 @@
+{% extends "radmin/base.html" %}
+{% load i18n %}
+
+{% block title %}Reports - Djra{% endblock %}
+{% block extra_head %}
+<script type="text/javascript">
+$(function(){
+  set_top_nav('reports');
+});
+</script>
+{% endblock %}
+
+{% block main_content %}
+
+<div class="section">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+  </div>
+  <div class="row">
+    <ul>
+      <li><a href="{% url 'djra.reports.views.geo_report' %}">Geo Report</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

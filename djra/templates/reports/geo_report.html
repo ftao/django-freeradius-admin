@@ -1,0 +1,48 @@
+{% extends "radmin/base.html" %}
+{% load i18n %}
+
+{% block title %}Geo Reports - Djra{% endblock %}
+{% block extra_head %}
+<script type="text/javascript">
+$(function(){
+  set_top_nav('reports');
+});
+</script>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+  <div class="page-header">
+    <h1>{% block page_header %} Geo Report {% endblock %}</h1>
+  </div>
+  <div>
+
+  <table class="zebra-striped">
+    <thead>
+      <tr>
+        <th>Location</th>
+        <th>Session Count</th>
+        <th>Sent</th>
+        <th>Received</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% load paging_extras %}
+
+      {% paginate report from request as results per_page 64 False %}
+  
+      {% for item in results.objects %}
+      <tr>
+        <td>{{ item.location }}</td>
+        <td>{{ item.count }}</td>
+        <td>{{ item.sum_input|filesizeformat }}</td>
+        <td>{{ item.sum_output|filesizeformat }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {{ results.paging }}
+ </div>
+</div>
+
+{% endblock %}

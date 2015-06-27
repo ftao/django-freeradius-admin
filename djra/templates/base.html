@@ -24,6 +24,7 @@
             <li id="top-nav-home"><a href="{% url "djra.radmin.views.home" %}">Dashboard</a></li> 
             <li id="top-nav-users"><a href="{% url "djra.radmin.views.users" %}">Users</a></li>
             <li id="top-nav-groups"><a href="{% url "djra.radmin.views.groups" %}">Groups</a></li>
+            <li id="top-nav-reports"><a href="{% url "djra.reports.views.index" %}">Reports</a></li>
           </ul> 
           {% block header_auth %}
           <ul class="nav secondary-nav">

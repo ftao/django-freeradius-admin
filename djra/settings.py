@@ -146,6 +146,7 @@ INSTALLED_APPS = (
     'tastypie',
     'djra.freeradius',
     'djra.radmin',
+    'djra.reports',
 )
 
 DATABASE_ROUTERS = ['djra.router.RadiusRouter']
