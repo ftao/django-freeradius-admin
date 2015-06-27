@@ -5,3 +5,4 @@ django-templatetag-sugar==1.0
 django-paging==0.2.5
 django-test-utils==0.3
 gunicorn==19.3.0
+https://github.com/timmy21/pipestat/archive/v0.8.0.tar.gz#egg=pipestat

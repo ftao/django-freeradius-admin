@@ -146,6 +146,7 @@ INSTALLED_APPS = (
     'tastypie',
     'djra.freeradius',
     'djra.radmin',
+    'djra.reports',
 )
 
 DATABASE_ROUTERS = ['djra.router.RadiusRouter']
@@ -181,6 +182,8 @@ LOGGING = {
         },
     }
 }
+
+#IP_DB_FILE = '/some/path/to/ipdb.dat'
 
 try:
     from local_settings import *
