@@ -1,21 +1,18 @@
-from django.db import models
+import os
+import warnings
 from pipestat import pipestat
+from djra import settings
 import itertools
-
-# Create your models here.
 
 from ipip import IP
 
-import os
-path = os.path.dirname(os.path.dirname(__file__))
-IP.load(os.path.join(path, "ipdb.dat"))
-
-def ip2area(ip):
-    return IP.find(ip)
-
-
-#        <td>{{ acct.acctinputoctets|filesizeformat }}</td>
-#        <td>{{ acct.acctoutputoctets|filesizeformat }}</td>
+IP_DB_FILE = getattr(settings, 'IP_DB_FILE', None)
+if IP_DB_FILE is None: 
+    warnings.warn('''not found IP_DB_FILE, geo report will not work, please set IP_DB_FILE in settings.
+    You can download the ipdb file from http://www.ipip.net/
+    ''')
+else:
+    IP.load(IP_DB_FILE)
 
 geo_report_pipe = [
     {
@@ -50,7 +47,7 @@ def build_geo_report(sessions):
         if '=' in ip:
             ip = ip.split('=', 1)[0]
         try:
-            location = ip2area(ip)
+            location = IP.find(ip)
         except:
             location = None
         return {
@@ -61,6 +58,4 @@ def build_geo_report(sessions):
 
     sessions = itertools.imap(prepare, sessions)
     items = pipestat(sessions, geo_report_pipe)
-
-    print items[0]
     return items

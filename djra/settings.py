@@ -183,6 +183,8 @@ LOGGING = {
     }
 }
 
+#IP_DB_FILE = '/some/path/to/ipdb.dat'
+
 try:
     from local_settings import *
 except ImportError:
