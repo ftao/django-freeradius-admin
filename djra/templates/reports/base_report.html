@@ -1,0 +1,35 @@
+{% extends "radmin/base.html" %}
+{% load i18n %}
+
+{% block title %}Reports - Djra{% endblock %}
+{% block extra_head %}
+<script type="text/javascript">
+$(function(){
+  set_top_nav('reports');
+});
+</script>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+  <div class="page-header">
+    <h1>{% block page_header %} Report {% endblock %}</h1>
+  </div>
+  <div>
+    <div>
+      <ul>
+        {% for drange in pre_defined_dranges %}
+        <li><a href="?drange={{ drange }}">{{ drange }}</a></li>
+        {% endfor %}
+      </ul>
+      <div>
+      Date Range: {{ begin_date }} - {{ end_date }}
+      </div>
+    </div>
+    {% block report_body %}
+
+    {% endblock report_body %}
+  </div>
+</div>
+
+{% endblock %}

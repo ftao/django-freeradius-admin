@@ -18,7 +18,8 @@ $(function(){
   </div>
   <div class="row">
     <ul>
-      <li><a href="{% url 'djra.reports.views.geo_report' %}">Geo Report</li>
+      <li><a href="{% url 'djra.reports.views.report' report_name='geo' %}">Geo Report</li>
+      <li><a href="{% url 'djra.reports.views.report' report_name='user' %}">User Report</li>
     </ul>
   </div>
 </div>
