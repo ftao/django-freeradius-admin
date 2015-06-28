@@ -1,0 +1,35 @@
+{% extends "reports/base_report.html" %}
+{% load i18n %}
+
+{% block title %}User Report - Djra{% endblock %}
+{% block page_header %} User Report {% endblock %}
+
+{% block report_body  %}
+    <table class="zebra-striped">
+      <thead>
+        <tr>
+          <th>NAS IP</th>
+          <th>User Count</th>
+          <th>Session Count</th>
+          <th>Sent</th>
+          <th>Received</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% load paging_extras %}
+
+        {% paginate report from request as results per_page 256 False %}
+    
+        {% for item in results.objects %}
+        <tr>
+          <td>{{ item.nasipaddress }}</td>
+          <td>{{ item.user_count }}</td>
+          <td>{{ item.session_count }}</td>
+          <td>{{ item.sum_input|filesizeformat }}</td>
+          <td>{{ item.sum_output|filesizeformat }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {{ results.paging }}
+{% endblock report_body %}

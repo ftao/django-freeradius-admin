@@ -24,6 +24,53 @@ def pick(x, fields):
         field: getattr(x, field) for field in fields
     }
 
+def build_server_report(begin_date, end_date, options):
+    fields = ['username', 'nasipaddress', 'acctinputoctets', 'acctoutputoctets'] 
+    sessions = Radacct.objects.filter(
+        acctstarttime__gte=begin_date, acctstarttime__lt=end_date
+    ).only(*fields)
+    sessions = itertools.imap(lambda x: pick(x, fields), sessions)
+    report_pipe = [
+        {
+            "$group": {
+                "_id": {
+                    "nasipaddress": "$nasipaddress",
+                    "username": "$username",
+                },
+                "session_count": {"$sum": 1},
+                "sum_input": {"$sum": "$acctinputoctets"},
+                "sum_output": {"$sum": "$acctoutputoctets"},
+            },
+        },
+        {
+            "$group": {
+                "_id": {
+                    "nasipaddress": "$_id.nasipaddress",
+                },
+                "user_count" : {"$sum" : 1},
+                "session_count": {"$sum": "$session_count"},
+                "sum_input": {"$sum": "$sum_input"},
+                "sum_output": {"$sum": "$sum_output"},
+            },
+        },
+        {
+            "$project" : {
+                "nasipaddress" : "$_id.nasipaddress",
+                "user_count" : "$user_count",
+                "session_count" : "$session_count",
+                "sum_input" : "$sum_input",
+                "sum_output" : "$sum_output",
+            },
+        },
+        {
+            "$sort" : {
+                "session_count" : -1
+            }
+        }
+    ]
+
+    return pipestat(sessions, report_pipe)
+ 
 def build_user_report(begin_date, end_date, options):
     fields = ['username', 'acctinputoctets', 'acctoutputoctets'] 
     sessions = Radacct.objects.filter(

@@ -2,7 +2,7 @@ import datetime
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
-from .models import build_geo_report, build_user_report
+from .models import build_geo_report, build_user_report, build_server_report
 
 @login_required
 def index(request):
@@ -51,6 +51,8 @@ def report(request, report_name):
         report = build_geo_report(begin_date, end_date, options)
     elif report_name == 'user':
         report = build_user_report(begin_date, end_date, options)
+    elif report_name == 'server':
+        report = build_server_report(begin_date, end_date, options)
     context = {
         'report' : report, 
         'begin_date' : begin_date,
