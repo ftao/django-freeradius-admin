@@ -1,17 +1,16 @@
 {% extends "reports/base_report.html" %}
 {% load i18n %}
 
-{% block title %}Geo Report - Djra{% endblock %}
-{% block page_header %} Geo Report {% endblock %}
+{% block title %}User Report - Djra{% endblock %}
+{% block page_header %} User Report {% endblock %}
 
-{% block report_body %}
+{% block report_body  %}
     <table class="zebra-striped">
       <thead>
         <tr>
-          <th>Location</th>
+          <th>NAS IP</th>
           <th>User Count</th>
           <th>Session Count</th>
-          <th>Avg Session Time</th>
           <th>Sent</th>
           <th>Received</th>
         </tr>
@@ -19,14 +18,13 @@
       <tbody>
         {% load paging_extras %}
 
-        {% paginate report from request as results per_page 64 False %}
+        {% paginate report from request as results per_page 256 False %}
     
         {% for item in results.objects %}
         <tr>
-          <td>{{ item.location }}</td>
+          <td>{{ item.nasipaddress }}</td>
           <td>{{ item.user_count }}</td>
           <td>{{ item.session_count }}</td>
-          <td>{{ item.session_avg_time }}</td>
           <td>{{ item.sum_input|filesizeformat }}</td>
           <td>{{ item.sum_output|filesizeformat }}</td>
         </tr>
