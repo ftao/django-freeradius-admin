@@ -29,4 +29,4 @@ $> PYTHONPATH=./ django-admin runserver --settings=djra.dev_settings
 
 ## Ansible Playbook Automation
 
-See [django-freeradius-admin](https://github.com/ftao/django-freeradius-admin) for detail.
+See [django-freeradius-admin](https://github.com/ftao/vpn-deploy-playbook/tree/master/roles/radius-admin) for detail.
