@@ -20,7 +20,7 @@ def get_date_range(request):
     if date_range == 'today':
         days = 1
         end_date = today +  datetime.timedelta(days=1)
-    if date_range == 'yestoday':
+    if date_range == 'yesterday':
         end_date = today
         days = 1
     if date_range == 'last_7':
@@ -37,7 +37,7 @@ def get_date_range(request):
 def report(request, report_name):
     pre_defined_dranges = [
         'today',
-        'yestoday',
+        'yesterday',
         'last_7',
         'last_30'
     ]
