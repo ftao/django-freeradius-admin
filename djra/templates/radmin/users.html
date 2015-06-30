@@ -46,7 +46,7 @@ $(function(){
           <td class="cell-username"><a href="{% url "djra.radmin.views.user_detail" username=result.username %}">{{ result.username }}</a></td>
           <td class="cell-password"><span>{{ result.password }}</span></td>
           <td>{{ result.groups|join:',' }}</td>
-          <td class="cell-is-active"><span {% if result.is_suspended %} class="red">Suspended {% else %}  class="green">Active{% endif %}</span></td>
+          <td class="cell-is-active"><span {% if not result.is_active %} class="red">Suspended {% else %}  class="green">Active{% endif %}</span></td>
           <td class="cell-is-online"><span {% if result.is_online %} class="red">Online {% else %}  class="green">Offline{% endif %}</span></td>
         </tr>
     {% endfor %}

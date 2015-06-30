@@ -116,8 +116,6 @@ class RadUser(Radcheck):
             op=':=',
             value='Reject').exists()
 
-        return not self.is_suspended
-
     def set_is_active(self, is_active):
         username = self.username
         if not is_active:
